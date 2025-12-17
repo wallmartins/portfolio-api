@@ -12,13 +12,20 @@ declare(strict_types=1);
 
 namespace App\Controller\Portfolio;
 
+use App\DTO\AboutDTO;
+use App\Services\AboutService;
 use Hyperf\HttpServer\Contract\RequestInterface;
-use Hyperf\HttpServer\Contract\ResponseInterface;
 
 class AboutController
 {
-    public function index(RequestInterface $request, ResponseInterface $response)
+    public function __construct(
+        private readonly AboutService $aboutService,
+    ) {
+    }
+
+    public function index(RequestInterface $request): AboutDTO
     {
-        return $response->raw('Hello Hyperf!');
+        $locate = $request->query('locale');
+        return $this->aboutService->getAbout($locate);
     }
 }

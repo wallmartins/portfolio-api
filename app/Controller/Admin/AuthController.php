@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Services\AuthService;
-use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use OnixSystemsPHP\HyperfSocialite\Contracts\Factory as SocialiteFactory;
@@ -21,11 +20,11 @@ use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
 class AuthController
 {
-    #[Inject]
-    protected SocialiteFactory $socialite;
-
-    #[Inject]
-    protected AuthService $authService;
+    public function __construct(
+        private readonly SocialiteFactory $socialite,
+        private readonly AuthService $authService
+    ) {
+    }
 
     public function redirect(ResponseInterface $response): PsrResponseInterface
     {
