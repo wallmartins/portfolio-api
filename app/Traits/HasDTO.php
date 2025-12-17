@@ -15,13 +15,6 @@ namespace App\Traits;
 trait HasDTO
 {
     /**
-     * Get the DTO class name for this model.
-     *
-     * @return class-string
-     */
-    abstract protected function getDTOClass(): string;
-
-    /**
      * Convert the model instance to a DTO.
      */
     public function toDTO(): object
@@ -29,4 +22,11 @@ trait HasDTO
         $dtoClass = $this->getDTOClass();
         return new $dtoClass($this->toArray());
     }
+
+    /**
+     * Get the DTO class name for this model.
+     *
+     * @return class-string
+     */
+    abstract protected function getDTOClass(): string;
 }

@@ -12,9 +12,10 @@ declare(strict_types=1);
 
 namespace App\Controller\Portfolio;
 
-use App\DTO\AboutDTO;
 use App\Services\AboutService;
 use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\HttpServer\Contract\ResponseInterface;
+use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
 class AboutController
 {
@@ -23,9 +24,10 @@ class AboutController
     ) {
     }
 
-    public function index(RequestInterface $request): AboutDTO
+    public function index(RequestInterface $request, ResponseInterface $response): PsrResponseInterface
     {
         $locate = $request->query('locale');
-        return $this->aboutService->getAbout($locate);
+        $aboutDTO = $this->aboutService->getAbout($locate);
+        return $response->json($aboutDTO->toArray());
     }
 }

@@ -12,8 +12,12 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
+use App\Traits\HasToArray;
+
 class AuthDTO
 {
+    use HasToArray;
+
     public int $id;
 
     public UserDTO $user;
@@ -30,15 +34,5 @@ class AuthDTO
         $this->accessToken = $data['accessToken'];
         $this->refreshToken = $data['refreshToken'];
         $this->expiresIn = $data['expiresIn'];
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'user' => $this->user->toArray(),
-            'accessToken' => $this->accessToken,
-            'refreshToken' => $this->refreshToken,
-            'expiresIn' => $this->expiresIn,
-        ];
     }
 }

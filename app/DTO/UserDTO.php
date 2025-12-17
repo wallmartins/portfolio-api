@@ -12,10 +12,13 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
+use App\Traits\HasToArray;
 use DateTime;
 
 class UserDTO
 {
+    use HasToArray;
+
     public int $id;
 
     public string $uuid;
@@ -39,18 +42,5 @@ class UserDTO
         $this->githubId = $data['github_id'];
         $this->createdAt = $data['created_at'] instanceof DateTime ? $data['created_at'] : new DateTime($data['created_at']);
         $this->updatedAt = $data['updated_at'] instanceof DateTime ? $data['updated_at'] : new DateTime($data['updated_at']);
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'id' => $this->id,
-            'uuid' => $this->uuid,
-            'name' => $this->name,
-            'email' => $this->email,
-            'github_id' => $this->githubId,
-            'created_at' => $this->createdAt->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updatedAt->format('Y-m-d H:i:s'),
-        ];
     }
 }

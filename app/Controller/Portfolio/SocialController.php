@@ -12,13 +12,20 @@ declare(strict_types=1);
 
 namespace App\Controller\Portfolio;
 
+use App\Services\SocialService;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 
 class SocialController
 {
+
+    public function __construct(
+        private readonly SocialService $socialService
+    ) {}
+
     public function index(RequestInterface $request, ResponseInterface $response)
     {
-        return $response->raw('Hello Hyperf!');
+        $socialDTO = $this->socialService->getSocials();
+        return $response->json($socialDTO->toArray());
     }
 }

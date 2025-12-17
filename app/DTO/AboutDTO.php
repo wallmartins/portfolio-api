@@ -12,10 +12,13 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
+use App\Traits\HasToArray;
 use Carbon\Carbon;
 
 class AboutDTO
 {
+    use HasToArray;
+
     public int $id;
 
     public string $title;
@@ -39,18 +42,5 @@ class AboutDTO
         $this->locale = $about['locale'];
         $this->createdAt = Carbon::now();
         $this->updatedAt = Carbon::now();
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'id' => $this->id,
-            'title' => $this->title,
-            'description' => $this->description,
-            'image' => $this->image ?? null,
-            'locale' => $this->locale,
-            'createdAt' => $this->createdAt,
-            'updatedAt' => $this->updatedAt,
-        ];
     }
 }
