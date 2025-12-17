@@ -95,6 +95,7 @@
         "gen:model": "php bin/gen-sqlite-model.php",
         "gen:model-hyperf": "php bin/hyperf.php gen:model",
         "gen:request": "php bin/hyperf.php gen:request",
-        "gen:migration": "php bin/hyperf.php gen:migration"
+        "gen:migration": "php bin/hyperf.php gen:migration",
+        "gen:migrate": "php bin/hyperf.php migrate:fresh"
     }
 }

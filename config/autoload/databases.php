@@ -26,6 +26,7 @@ return [
         'prefix' => env('DB_PREFIX', ''),
         'charset' => env('DB_CHARSET', 'utf8'),
         'collation' => env('DB_COLLATION', 'utf8_unicode_ci'),
+        'foreign_key_constraints' => true,
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 1,
