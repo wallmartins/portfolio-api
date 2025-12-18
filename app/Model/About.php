@@ -13,32 +13,31 @@ declare(strict_types=1);
 namespace App\Model;
 
 use Carbon\Carbon;
-use Hyperf\Database\Model\Events\Creating;
-use Hyperf\Stringable\Str;
 
 /**
  * @property int $id
- * @property string $uuid
- * @property string $name
- * @property string $email
- * @property string $github_id
+ * @property string $title
+ * @property string $description
+ * @property string $image
+ * @property string $locale
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
-class User extends Model
+class About extends Model
 {
     /**
      * The table associated with the model.
      */
-    protected ?string $table = 'user';
+    protected ?string $table = 'about';
 
     /**
      * The attributes that are mass assignable.
      */
     protected array $fillable = [
-        'name',
-        'email',
-        'github_id',
+        'title',
+        'description',
+        'image',
+        'locale',
     ];
 
     /**
@@ -46,18 +45,11 @@ class User extends Model
      */
     protected array $casts = [
         'id' => 'integer',
-        'uuid' => 'string',
-        'name' => 'string',
-        'email' => 'string',
-        'github_id' => 'string',
+        'title' => 'string',
+        'description' => 'string',
+        'image' => 'string',
+        'locale' => 'string',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-
-    public function creating(Creating $event)
-    {
-        if (empty($this->uuid)) {
-            $this->uuid = (string) Str::uuid();
-        }
-    }
 }

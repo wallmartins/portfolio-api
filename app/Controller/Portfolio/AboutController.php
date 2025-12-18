@@ -12,13 +12,33 @@ declare(strict_types=1);
 
 namespace App\Controller\Portfolio;
 
-use Hyperf\HttpServer\Contract\RequestInterface;
+use App\Request\Portfolio\GetAboutRequest;
+use App\Resource\AboutResource;
+use App\Services\AboutService;
+use App\Traits\RespondsWithResource;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\ResponseInterface;
+use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
 class AboutController
 {
-    public function index(RequestInterface $request, ResponseInterface $response)
+    use RespondsWithResource;
+
+    #[Inject]
+    protected ResponseInterface $response;
+
+    public function __construct(
+        private readonly AboutService $aboutService,
+    ) {
+    }
+
+    /**
+     * Get about information by locale.
+     */
+    public function index(GetAboutRequest $request): PsrResponseInterface
     {
-        return $response->raw('Hello Hyperf!');
+        $validated = $request->validated();
+        $about = $this->aboutService->getByLocale($validated['locale']);
+        return $this->jsonResource(AboutResource::make($about));
     }
 }

@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\DTO\AuthDTO;
 use App\Model\User;
 use App\Repository\UserRepository;
 
@@ -24,23 +23,33 @@ class AuthService
     ) {
     }
 
-    public function findOrCreateUser(array $githubUserData)
+    /**
+     * Find or create user from GitHub data and generate auth tokens.
+     *
+     * @return array{user: User, accessToken: string, refreshToken: string, expiresIn: int}
+     */
+    public function findOrCreateUser(array $githubUserData): array
     {
         $user = $this->userRepository->findOrCreateFromGithub($githubUserData);
 
         return $this->generateAuthTokens($user);
     }
 
-    public function generateAuthTokens(User $user): AuthDTO
+    /**
+     * Generate authentication tokens for a user.
+     *
+     * @return array{user: User, accessToken: string, refreshToken: string, expiresIn: int}
+     */
+    public function generateAuthTokens(User $user): array
     {
         $accessToken = $this->tokenService->generateAccessToken($user);
         $refreshToken = $this->tokenService->generateRefreshToken($user);
 
-        return new AuthDTO([
-            'user' => $user->toDTO(),
+        return [
+            'user' => $user,
             'accessToken' => $accessToken,
             'refreshToken' => $refreshToken,
-            'expiresIn' => 900,
-        ]);
+            'expiresIn' => 3600,
+        ];
     }
 }
