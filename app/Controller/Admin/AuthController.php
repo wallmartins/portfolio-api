@@ -14,12 +14,19 @@ namespace App\Controller\Admin;
 
 use App\Resource\AuthResource;
 use App\Services\AuthService;
+use App\Traits\RespondsWithResource;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use OnixSystemsPHP\HyperfSocialite\Contracts\Factory as SocialiteFactory;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
 class AuthController
 {
+    use RespondsWithResource;
+
+    #[Inject]
+    protected ResponseInterface $response;
+
     public function __construct(
         private readonly SocialiteFactory $socialite,
         private readonly AuthService $authService
@@ -29,7 +36,7 @@ class AuthController
     /**
      * Redirect to GitHub OAuth.
      */
-    public function redirect(ResponseInterface $response): PsrResponseInterface
+    public function redirect(): PsrResponseInterface
     {
         return $this->socialite->driver('github')->redirect();
     }
@@ -37,7 +44,7 @@ class AuthController
     /**
      * Handle GitHub OAuth callback.
      */
-    public function callback(ResponseInterface $response): PsrResponseInterface
+    public function callback(): PsrResponseInterface
     {
         $githubUser = $this->socialite->driver('github')->user();
 
@@ -57,6 +64,6 @@ class AuthController
             $authData['expiresIn']
         );
 
-        return $response->json($resource->toArray());
+        return $this->jsonResource($resource);
     }
 }

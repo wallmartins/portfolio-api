@@ -14,10 +14,18 @@ namespace App\Controller\Portfolio;
 
 use App\Resource\SocialCollection;
 use App\Services\SocialService;
+use App\Traits\RespondsWithResource;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\ResponseInterface;
+use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
 class SocialController
 {
+    use RespondsWithResource;
+
+    #[Inject]
+    protected ResponseInterface $response;
+
     public function __construct(
         private readonly SocialService $socialService
     ) {
@@ -26,11 +34,9 @@ class SocialController
     /**
      * Get all social media links.
      */
-    public function index(ResponseInterface $response)
+    public function index(): PsrResponseInterface
     {
         $socials = $this->socialService->getAll();
-        $resource = SocialCollection::make($socials);
-
-        return $response->json($resource->toArray());
+        return $this->jsonResource(SocialCollection::make($socials));
     }
 }

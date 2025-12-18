@@ -16,12 +16,18 @@ use App\Request\Admin\CreateAboutRequest;
 use App\Request\Admin\UpdateAboutRequest;
 use App\Resource\AboutResource;
 use App\Services\AboutService;
-use Hyperf\Database\Model\Collection;
+use App\Traits\RespondsWithResource;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
 class AboutController
 {
+    use RespondsWithResource;
+
+    #[Inject]
+    protected ResponseInterface $response;
+
     public function __construct(
         private readonly AboutService $aboutService
     ) {
@@ -30,7 +36,7 @@ class AboutController
     /**
      * List all about entries.
      */
-    public function index(ResponseInterface $response): PsrResponseInterface
+    public function index(): PsrResponseInterface
     {
         $abouts = $this->aboutService->getAll();
 
@@ -38,7 +44,7 @@ class AboutController
             return AboutResource::make($about)->toArray();
         })->toArray();
 
-        return $response->json([
+        return $this->response->json([
             'data' => $data,
             'meta' => [
                 'total' => $abouts->count(),
@@ -49,47 +55,38 @@ class AboutController
     /**
      * Get a specific about entry.
      */
-    public function show(int $id, ResponseInterface $response): PsrResponseInterface
+    public function show(int $id): PsrResponseInterface
     {
         $about = $this->aboutService->getById($id);
-        $resource = AboutResource::make($about);
-
-        return $response->json($resource->toArray());
+        return $this->jsonResource(AboutResource::make($about));
     }
 
     /**
      * Create a new about entry.
      */
-    public function store(CreateAboutRequest $request, ResponseInterface $response): PsrResponseInterface
+    public function store(CreateAboutRequest $request): PsrResponseInterface
     {
         $validated = $request->validated();
         $about = $this->aboutService->create($validated);
-        $resource = AboutResource::make($about);
-
-        return $response->json($resource->toArray())->withStatus(201);
+        return $this->created(AboutResource::make($about));
     }
 
     /**
      * Update an about entry.
      */
-    public function update(int $id, UpdateAboutRequest $request, ResponseInterface $response): PsrResponseInterface
+    public function update(int $id, UpdateAboutRequest $request): PsrResponseInterface
     {
         $validated = $request->validated();
         $about = $this->aboutService->update($id, $validated);
-        $resource = AboutResource::make($about);
-
-        return $response->json($resource->toArray());
+        return $this->jsonResource(AboutResource::make($about));
     }
 
     /**
      * Delete an about entry.
      */
-    public function destroy(int $id, ResponseInterface $response): PsrResponseInterface
+    public function destroy(int $id): PsrResponseInterface
     {
         $this->aboutService->delete($id);
-
-        return $response->json([
-            'message' => 'About entry deleted successfully',
-        ])->withStatus(204);
+        return $this->noContent('About entry deleted successfully');
     }
 }

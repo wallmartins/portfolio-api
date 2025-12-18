@@ -15,11 +15,18 @@ namespace App\Controller\Portfolio;
 use App\Request\Portfolio\GetAboutRequest;
 use App\Resource\AboutResource;
 use App\Services\AboutService;
+use App\Traits\RespondsWithResource;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
 class AboutController
 {
+    use RespondsWithResource;
+
+    #[Inject]
+    protected ResponseInterface $response;
+
     public function __construct(
         private readonly AboutService $aboutService,
     ) {
@@ -28,12 +35,10 @@ class AboutController
     /**
      * Get about information by locale.
      */
-    public function index(GetAboutRequest $request, ResponseInterface $response): PsrResponseInterface
+    public function index(GetAboutRequest $request): PsrResponseInterface
     {
         $validated = $request->validated();
         $about = $this->aboutService->getByLocale($validated['locale']);
-        $resource = AboutResource::make($about);
-
-        return $response->json($resource->toArray());
+        return $this->jsonResource(AboutResource::make($about));
     }
 }

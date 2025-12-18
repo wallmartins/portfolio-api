@@ -17,11 +17,18 @@ use App\Request\Admin\UpdateSocialRequest;
 use App\Resource\SocialCollection;
 use App\Resource\SocialResource;
 use App\Services\SocialService;
+use App\Traits\RespondsWithResource;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
 class SocialController
 {
+    use RespondsWithResource;
+
+    #[Inject]
+    protected ResponseInterface $response;
+
     public function __construct(
         private readonly SocialService $socialService
     ) {
@@ -30,58 +37,47 @@ class SocialController
     /**
      * List all social media links.
      */
-    public function index(ResponseInterface $response): PsrResponseInterface
+    public function index(): PsrResponseInterface
     {
         $socials = $this->socialService->getAll();
-        $resource = SocialCollection::make($socials);
-
-        return $response->json($resource->toArray());
+        return $this->jsonResource(SocialCollection::make($socials));
     }
 
     /**
      * Get a specific social media link.
      */
-    public function show(int $id, ResponseInterface $response): PsrResponseInterface
+    public function show(int $id): PsrResponseInterface
     {
         $social = $this->socialService->getById($id);
-        $resource = SocialResource::make($social);
-
-        return $response->json($resource->toArray());
+        return $this->jsonResource(SocialResource::make($social));
     }
 
     /**
      * Create a new social media link.
      */
-    public function store(CreateSocialRequest $request, ResponseInterface $response): PsrResponseInterface
+    public function store(CreateSocialRequest $request): PsrResponseInterface
     {
         $validated = $request->validated();
         $social = $this->socialService->create($validated);
-        $resource = SocialResource::make($social);
-
-        return $response->json($resource->toArray())->withStatus(201);
+        return $this->created(SocialResource::make($social));
     }
 
     /**
      * Update a social media link.
      */
-    public function update(int $id, UpdateSocialRequest $request, ResponseInterface $response): PsrResponseInterface
+    public function update(int $id, UpdateSocialRequest $request): PsrResponseInterface
     {
         $validated = $request->validated();
         $social = $this->socialService->update($id, $validated);
-        $resource = SocialResource::make($social);
-
-        return $response->json($resource->toArray());
+        return $this->jsonResource(SocialResource::make($social));
     }
 
     /**
      * Delete a social media link.
      */
-    public function destroy(int $id, ResponseInterface $response): PsrResponseInterface
+    public function destroy(int $id): PsrResponseInterface
     {
         $this->socialService->delete($id);
-
-        return $response->json([
-            'message' => 'Social media link deleted successfully',
-        ])->withStatus(204);
+        return $this->noContent('Social media link deleted successfully');
     }
 }
