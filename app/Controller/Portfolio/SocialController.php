@@ -12,20 +12,25 @@ declare(strict_types=1);
 
 namespace App\Controller\Portfolio;
 
+use App\Resource\SocialCollection;
 use App\Services\SocialService;
-use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 
 class SocialController
 {
-
     public function __construct(
         private readonly SocialService $socialService
-    ) {}
+    ) {
+    }
 
-    public function index(RequestInterface $request, ResponseInterface $response)
+    /**
+     * Get all social media links.
+     */
+    public function index(ResponseInterface $response)
     {
-        $socialDTO = $this->socialService->getSocials();
-        return $response->json($socialDTO->toArray());
+        $socials = $this->socialService->getAll();
+        $resource = SocialCollection::make($socials);
+
+        return $response->json($resource->toArray());
     }
 }

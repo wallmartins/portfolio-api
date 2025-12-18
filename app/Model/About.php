@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use App\DTO\AboutDTO;
-use App\Traits\HasDTO;
 use Carbon\Carbon;
 
 /**
@@ -27,8 +25,6 @@ use Carbon\Carbon;
  */
 class About extends Model
 {
-    use HasDTO;
-
     /**
      * The table associated with the model.
      */
@@ -56,9 +52,4 @@ class About extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-
-    protected function getDTOClass(): string
-    {
-        return AboutDTO::class;
-    }
 }

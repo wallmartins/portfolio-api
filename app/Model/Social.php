@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use App\DTO\SocialDTO;
 use Carbon\Carbon;
 
 /**
@@ -47,9 +46,4 @@ class Social extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-
-    protected function getDTOClass(): string
-    {
-        return SocialDTO::class;
-    }
 }

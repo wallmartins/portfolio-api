@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use App\DTO\UserDTO;
-use App\Traits\HasDTO;
 use Carbon\Carbon;
 use Hyperf\Database\Model\Events\Creating;
 use Hyperf\Stringable\Str;
@@ -29,8 +27,6 @@ use Hyperf\Stringable\Str;
  */
 class User extends Model
 {
-    use HasDTO;
-
     /**
      * The table associated with the model.
      */
@@ -63,10 +59,5 @@ class User extends Model
         if (empty($this->uuid)) {
             $this->uuid = (string) Str::uuid();
         }
-    }
-
-    protected function getDTOClass(): string
-    {
-        return UserDTO::class;
     }
 }

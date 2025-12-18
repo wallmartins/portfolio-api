@@ -12,8 +12,9 @@ declare(strict_types=1);
 
 namespace App\Controller\Portfolio;
 
+use App\Request\Portfolio\GetAboutRequest;
+use App\Resource\AboutResource;
 use App\Services\AboutService;
-use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
@@ -24,10 +25,15 @@ class AboutController
     ) {
     }
 
-    public function index(RequestInterface $request, ResponseInterface $response): PsrResponseInterface
+    /**
+     * Get about information by locale.
+     */
+    public function index(GetAboutRequest $request, ResponseInterface $response): PsrResponseInterface
     {
-        $locate = $request->query('locale');
-        $aboutDTO = $this->aboutService->getAbout($locate);
-        return $response->json($aboutDTO->toArray());
+        $validated = $request->validated();
+        $about = $this->aboutService->getByLocale($validated['locale']);
+        $resource = AboutResource::make($about);
+
+        return $response->json($resource->toArray());
     }
 }
