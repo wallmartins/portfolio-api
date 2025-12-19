@@ -41,7 +41,6 @@ class GetPostRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'slug.required' => 'The slug parameter is required.',
             'locale.required' => 'The locale parameter is required',
             'locale.string' => 'Portfolio Locale must be a string.',
             'locale.in' => 'The locale must be pt-BR or en-US',
