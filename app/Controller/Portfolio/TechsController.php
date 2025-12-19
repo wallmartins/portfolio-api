@@ -12,11 +12,10 @@ declare(strict_types=1);
 
 namespace App\Controller\Portfolio;
 
-use App\Resource\TechResource;
+use App\Resource\TechCollection;
 use App\Services\TechService;
 use App\Traits\RespondsWithResource;
 use Hyperf\Di\Annotation\Inject;
-use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
@@ -32,9 +31,9 @@ class TechsController
     ) {
     }
 
-    public function index(RequestInterface $request, ResponseInterface $response): PsrResponseInterface
+    public function index(): PsrResponseInterface
     {
         $tech = $this->techService->getAll();
-        return $this->jsonResource(TechResource::make($tech));
+        return $this->jsonResource(TechCollection::make($tech));
     }
 }

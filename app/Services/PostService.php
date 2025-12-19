@@ -15,7 +15,7 @@ namespace App\Services;
 use App\Model\Post;
 use App\Repository\PostRepository;
 use Exception;
-use Hyperf\Collection\Collection;
+use Hyperf\Database\Model\Collection;
 use Hyperf\HttpMessage\Exception\NotFoundHttpException;
 
 class PostService

@@ -14,9 +14,11 @@ namespace App\Controller\Portfolio;
 
 use App\Model\Post;
 use App\Request\Portfolio\GetPostRequest;
+use App\Resource\PostCollection;
 use App\Resource\PostPublicResource;
 use App\Services\PostService;
 use App\Traits\RespondsWithResource;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
@@ -24,19 +26,22 @@ class PostController
 {
     use RespondsWithResource;
 
-    public function __construct(ResponseInterface $response, private readonly PostService $postService)
+    #[Inject]
+    protected ResponseInterface $response;
+
+    public function __construct(private readonly PostService $postService)
     {
     }
 
-    public function index(GetPostRequest $request, ResponseInterface $response): PsrResponseInterface
+    public function index(GetPostRequest $request): PsrResponseInterface
     {
         $locale = $request->validated()['locale'];
         $posts = $this->postService->getAll();
 
-        return $this->jsonResource(PostPublicResource::make($posts));
+        return $this->jsonResource(PostCollection::make($posts));
     }
 
-    public function show(string $slug, GetPostRequest $request, ResponseInterface $response, Post $post): PsrResponseInterface
+    public function show(string $slug, GetPostRequest $request): PsrResponseInterface
     {
         $locale = $request->validated()['locale'];
         $post = $this->postService->getBySlugAndLocale($slug, $locale);

@@ -13,17 +13,18 @@ declare(strict_types=1);
 namespace App\Model;
 
 use Carbon\Carbon;
+use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Relations\BelongsToMany;
 use Hyperf\Database\Model\Relations\HasMany;
 
 /**
  * @property int $id
- * @property string $title
- * @property string $subtitle
  * @property string $slug
  * @property string $image
  * @property Carbon $created_at
  * @property Carbon $updated_at
+ * @property Collection<int, PostsTranslation> $translations
+ * @property Collection<int, Tech> $techs
  */
 class Post extends Model
 {
@@ -36,8 +37,6 @@ class Post extends Model
      * The attributes that are mass assignable.
      */
     protected array $fillable = [
-        'title',
-        'subtitle',
         'slug',
         'image',
     ];

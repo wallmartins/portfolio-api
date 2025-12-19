@@ -14,7 +14,7 @@ namespace App\Repository;
 
 use App\Model\Post;
 use Exception;
-use Hyperf\Collection\Collection;
+use Hyperf\Database\Model\Collection;
 
 class PostRepository
 {
@@ -36,9 +36,9 @@ class PostRepository
     {
         return Post::query()
             ->where('slug', $slug)
-            ->with('translations', function ($query) use ($locale) {
+            ->with(['translations', function ($query) use ($locale) {
                 $query->where('locale', $locale);
-            })
+            }])
             ->with('techs')
             ->first();
     }
@@ -56,9 +56,7 @@ class PostRepository
         }
 
         if (isset($data['techs'])) {
-            foreach ($data['techs'] as $tech) {
-                $post->techs()->create($tech);
-            }
+            $post->techs()->attach($data['techs']);
         }
 
         return $post->load(['translations', 'techs']);

@@ -19,6 +19,8 @@ use Hyperf\Database\Model\Relations\BelongsTo;
  * @property int $id
  * @property int $post_id
  * @property string $locale
+ * @property string $title
+ * @property string $subtitle
  * @property string $content
  * @property Carbon $created_at
  * @property Carbon $updated_at

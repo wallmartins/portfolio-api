@@ -21,7 +21,7 @@ class PostPublicResource extends JsonResource
 {
     public function toArray(): array
     {
-        $translation = $this->resource->translations()->first();
+        $translation = $this->resource->translations->first();
 
         return [
             'id' => $this->resource->id,
@@ -30,7 +30,7 @@ class PostPublicResource extends JsonResource
             'subtitle' => $translation?->subtitle,
             'content' => $translation?->content,
             'image' => $this->resource->image,
-            'techs' => $this->resource->techs()->map(function ($tech) {
+            'techs' => $this->resource->techs->map(function ($tech) {
                 return [
                     'id' => $tech->id,
                     'slug' => $tech->slug,

@@ -15,7 +15,7 @@ namespace App\Services;
 use App\Model\Tech;
 use App\Repository\TechRepository;
 use Exception;
-use Hyperf\Collection\Collection;
+use Hyperf\Database\Model\Collection;
 use Hyperf\Di\Exception\NotFoundException;
 
 class TechService

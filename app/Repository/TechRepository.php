@@ -14,7 +14,7 @@ namespace App\Repository;
 
 use App\Model\Tech;
 use Exception;
-use Hyperf\Collection\Collection;
+use Hyperf\Database\Model\Collection;
 
 class TechRepository
 {
