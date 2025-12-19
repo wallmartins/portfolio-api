@@ -14,7 +14,7 @@ namespace App\Request\Portfolio;
 
 use Hyperf\Validation\Request\FormRequest;
 
-class GetAboutRequest extends FormRequest
+class GetPostRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -31,6 +31,7 @@ class GetAboutRequest extends FormRequest
     {
         return [
             'locale' => 'required|string|in:pt-BR,en-US',
+            'slug' => 'sometimes|required|string',
         ];
     }
 
@@ -40,6 +41,7 @@ class GetAboutRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'slug.required' => 'The slug parameter is required.',
             'locale.required' => 'The locale parameter is required',
             'locale.string' => 'Portfolio Locale must be a string.',
             'locale.in' => 'The locale must be pt-BR or en-US',

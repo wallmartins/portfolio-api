@@ -28,9 +28,9 @@ class TechRepository
         return Tech::find($id);
     }
 
-    public function create(Tech $tech): Tech
+    public function create(array $data): Tech
     {
-        return Tech::create($tech);
+        return Tech::create($data);
     }
 
     public function update(Tech $tech, array $data): Tech

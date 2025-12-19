@@ -22,6 +22,7 @@ return new class extends Migration {
         Schema::create('projects_translations', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('project_id');
+            $table->string('title');
             $table->text('content');
             $table->string('locale', 5);
             $table->timestamps();
