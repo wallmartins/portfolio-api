@@ -12,6 +12,11 @@ declare(strict_types=1);
 
 namespace App\Resource;
 
+use App\Model\Social;
+
+/**
+ * @extends JsonResource<Social>
+ */
 class SocialResource extends JsonResource
 {
     /**

@@ -15,7 +15,7 @@ namespace App\Services;
 use App\Model\About;
 use App\Repository\AboutRepository;
 use Hyperf\Database\Model\Collection;
-use Hyperf\HttpMessage\Exception\NotFoundException;
+use Hyperf\Di\Exception\NotFoundException;
 
 class AboutService
 {
@@ -26,6 +26,7 @@ class AboutService
 
     /**
      * Get about by locale.
+     * @throws NotFoundException
      */
     public function getByLocale(string $locale): About
     {
@@ -70,6 +71,7 @@ class AboutService
 
     /**
      * Update an about entry.
+     * @throws NotFoundException
      */
     public function update(int $id, array $data): About
     {
@@ -79,6 +81,7 @@ class AboutService
 
     /**
      * Delete an about entry.
+     * @throws NotFoundException
      */
     public function delete(int $id): bool
     {

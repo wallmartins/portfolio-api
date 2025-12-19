@@ -13,9 +13,16 @@ declare(strict_types=1);
 namespace App\Resource;
 
 use Hyperf\Database\Model\Collection;
+use Hyperf\DbConnection\Model\Model;
 
+/**
+ * @template TModel of Model
+ */
 abstract class ResourceCollection
 {
+    /**
+     * @param Collection<int, TModel> $collection
+     */
     public function __construct(
         protected Collection $collection
     ) {
@@ -28,6 +35,8 @@ abstract class ResourceCollection
 
     /**
      * Create a new resource collection instance.
+     *
+     * @param Collection<int, TModel> $collection
      */
     public static function make(Collection $collection): static
     {

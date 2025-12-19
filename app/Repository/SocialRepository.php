@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Model\Social;
+use Exception;
 use Hyperf\Database\Model\Collection;
 
 class SocialRepository
@@ -52,6 +53,7 @@ class SocialRepository
 
     /**
      * Delete a social media link.
+     * @throws Exception
      */
     public function delete(Social $social): bool
     {

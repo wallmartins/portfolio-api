@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Model\About;
+use Exception;
 use Hyperf\Database\Model\Collection;
 
 class AboutRepository
@@ -62,6 +63,7 @@ class AboutRepository
 
     /**
      * Delete an about entry.
+     * @throws Exception
      */
     public function delete(About $about): bool
     {

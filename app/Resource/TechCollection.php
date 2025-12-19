@@ -12,21 +12,18 @@ declare(strict_types=1);
 
 namespace App\Resource;
 
-use App\Model\Social;
+use App\Model\Tech;
 
 /**
- * @extends ResourceCollection<Social>
+ * @extends ResourceCollection<Tech>
  */
-class SocialCollection extends ResourceCollection
+class TechCollection extends ResourceCollection
 {
-    /**
-     * Transform the resource collection into an array.
-     */
     public function toArray(): array
     {
         return [
-            'data' => $this->collection->map(function ($social) {
-                return SocialResource::make($social)->toArray();
+            'data' => $this->collection->map(function ($tech) {
+                return TechResource::make($tech)->toArray();
             })->toArray(),
             'meta' => [
                 'total' => $this->collection->count(),
