@@ -32,7 +32,7 @@ Router::addRoute(['GET', 'POST', 'HEAD'], '/', 'App\Controller\IndexController@i
 Router::addGroup('/portfolio/', function () {
     Router::get('about', [AboutController::class, 'index', ['as' => 'portfolio.about']]);
     Router::get('blog', [PostController::class, 'index', ['as' => 'portfolio.index.blog']]);
-    Router::get('blog/{slug}', [PostController::class, 'show', ['as' => 'portfolio.show.blog']]);
+    Router::get('blog/{id}', [PostController::class, 'show', ['as' => 'portfolio.show.blog']]);
     Router::get('experiences', [ExperiencesController::class, 'index', ['as' => 'portfolio.experiences']]);
     Router::get('projects', [ProjectsController::class, 'index', ['as' => 'portfolio.index.projects']]);
     Router::get('projects/{id}', [ProjectsController::class, 'show', ['as' => 'portfolio.show.projects']]);

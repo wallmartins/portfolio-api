@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Portfolio;
 
-use App\Model\Post;
 use App\Request\Portfolio\GetPostRequest;
 use App\Resource\PostCollection;
 use App\Resource\PostPublicResource;
@@ -41,10 +40,10 @@ class PostController
         return $this->jsonResource(PostCollection::make($posts));
     }
 
-    public function show(string $slug, GetPostRequest $request): PsrResponseInterface
+    public function show(int $id, GetPostRequest $request): PsrResponseInterface
     {
         $locale = $request->validated()['locale'];
-        $post = $this->postService->getBySlugAndLocale($slug, $locale);
+        $post = $this->postService->getById($id);
 
         return $this->jsonResource(PostPublicResource::make($post));
     }
