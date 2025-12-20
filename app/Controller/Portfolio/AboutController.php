@@ -17,6 +17,7 @@ use App\Resource\AboutResource;
 use App\Services\AboutService;
 use App\Traits\RespondsWithResource;
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
@@ -34,6 +35,7 @@ class AboutController
 
     /**
      * Get about information by locale.
+     * @throws NotFoundException
      */
     public function index(GetAboutRequest $request): PsrResponseInterface
     {

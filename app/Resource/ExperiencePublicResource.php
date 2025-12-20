@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace App\Resource;
 
-use App\Model\Post;
+use App\Model\Experience;
 
 /**
- * @extends JsonResource<Post>
+ * @extends JsonResource<Experience>
  */
-class PostPublicResource extends JsonResource
+class ExperiencePublicResource extends JsonResource
 {
     public function toArray(): array
     {
@@ -25,12 +25,10 @@ class PostPublicResource extends JsonResource
 
         return [
             'id' => $this->resource->id,
-            'slug' => $this->resource->slug,
-            'title' => $translation?->title,
-            'subtitle' => $translation?->subtitle,
-            'content' => $translation?->content,
-            'image' => $this->resource->image,
-            'locale' => $translation?->locale,
+            'company_name' => $this->resource->company_name,
+            'position' => $translation?->position,
+            'description' => $translation?->description,
+            'start_date' => $this->resource->start_date,
             'techs' => $this->resource->techs->map(function ($tech) {
                 return [
                     'id' => $tech->id,
@@ -38,7 +36,9 @@ class PostPublicResource extends JsonResource
                     'name' => $tech->name,
                     'category' => $tech->category,
                 ];
-            })->toArray(),
+            }),
+            'created_at' => $this->resource->created_at,
+            'updated_at' => $this->resource->updated_at,
         ];
     }
 }

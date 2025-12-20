@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Portfolio;
 
+use App\Request\Portfolio\GetListPostRequest;
 use App\Request\Portfolio\GetPostRequest;
 use App\Resource\PostCollection;
 use App\Resource\PostPublicResource;
@@ -32,10 +33,11 @@ class PostController
     {
     }
 
-    public function index(GetPostRequest $request): PsrResponseInterface
+    public function index(GetListPostRequest $request): PsrResponseInterface
     {
         $locale = $request->validated()['locale'];
-        $posts = $this->postService->getAll();
+        $filters = $request->validated();
+        $posts = $this->postService->paginate($filters, $locale);
 
         return $this->jsonResource(PostCollection::make($posts));
     }
@@ -43,7 +45,7 @@ class PostController
     public function show(int $id, GetPostRequest $request): PsrResponseInterface
     {
         $locale = $request->validated()['locale'];
-        $post = $this->postService->getById($id);
+        $post = $this->postService->getById($id, $locale);
 
         return $this->jsonResource(PostPublicResource::make($post));
     }

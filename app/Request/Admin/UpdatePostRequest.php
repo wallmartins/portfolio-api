@@ -10,11 +10,11 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace App\Request\Portfolio;
+namespace App\Request\Admin;
 
 use Hyperf\Validation\Request\FormRequest;
 
-class CreatePostRequest extends FormRequest
+class UpdatePostRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -23,22 +23,24 @@ class CreatePostRequest extends FormRequest
 
     public function rules(): array
     {
+        $postSlug = $this->route('slug');
+
         return [
-            'slug' => 'required|string|unique:posts,slug',
-            'translations' => 'required|array|min:1',
+            'slug' => "required|string|max:255|unique:posts,{$postSlug}",
+            'translations' => 'sometimes|required|array|min:1',
             'translations.*.locale' => 'required|string|in:pt-BR,en-US',
-            'translations.*.title' => 'required|string',
-            'translations.*.content' => 'required|string',
-            'tech_ids' => 'required|array|min:1',
-            'tech_ids.*' => 'required|integer|exists:techs,id',
+            'translations.*.title' => 'sometimes|required|string|max:255',
+            'translations.*.subtitle' => 'sometimes|required|string|max:255',
+            'translations.*.content' => 'sometimes|required|string',
+            'tech_ids' => 'sometimes|required|array|min:1',
+            'tech_ids.*' => 'sometimes|required|integer|exists:techs,id',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'slug.unique' => 'A post with the same slug already exists.',
-            'translations.required' => 'At least one translation field is required.',
+            'slug.required' => 'The slug field is required.',
             'locale.*.locale.in' => 'Locale must be pt-BR or en-US.',
             'tech_ids.*.exists' => 'One or more technologies do not exist.',
         ];

@@ -12,17 +12,17 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Interface\PostRepositoryInterface;
-use App\Model\Post;
+use App\Interface\ProjectRepositoryInterface;
+use App\Model\Project;
 use Exception;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Model\Builder;
 
-class PostRepository implements PostRepositoryInterface
+class ProjectRepository implements ProjectRepositoryInterface
 {
     public function paginate(array $filters, string $locale, int $perPage = 10): PaginatorInterface
     {
-        $query = Post::query()
+        $query = Project::query()
             ->with(['translations' => function ($query) use ($locale) {
                 $query->where('locale', $locale);
             }])
@@ -30,65 +30,65 @@ class PostRepository implements PostRepositoryInterface
 
         $this->applyFilters($query, $filters);
 
-        return $query->simplePaginate((int) $filters['per_page'] ?? $perPage);
+        return $query->simplePaginate($perPage);
     }
 
-    public function getById(int $id, string $locale): ?Post
+    public function getById(int $id, string $locale): ?Project
     {
-        return Post::query()
-            ->with(['translations' => function ($query) use ($locale, $id) {
-                $query->where('locale', $locale)->where('post_id', $id);
+        return Project::query()
+            ->with(['translations' => function ($query) use ($locale) {
+                $query->where('locale', $locale);
             }])
-            ->with('techs')
+            ->where('id', $id)
             ->find($id);
     }
 
-    public function create(array $data): Post
+    public function create(array $data): Project
     {
-        $post = Post::create([
+        $project = Project::create([
             'slug' => $data['slug'],
         ]);
 
         if (isset($data['translations'])) {
             foreach ($data['translations'] as $translation) {
-                $post->translations()->create($translation);
+                $project->translations()->create($translation);
             }
         }
 
         if (isset($data['techs'])) {
-            $post->techs()->attach($data['techs']);
+            $project->techs()->attach($data['techs']);
         }
 
-        return $post->load(['translations', 'techs']);
+        return $project->load(['translations', 'techs']);
     }
 
-    public function update(Post $post, array $data): Post
+    public function update(Project $project, array $data): Project
     {
         if (isset($data['slug'])) {
-            $post->update(['slug' => $data['slug']]);
+            $project->update(['slug' => $data['slug']]);
         }
 
         if (isset($data['translations'])) {
-            $post->translations()->delete();
+            $project->translations()->delete();
 
             foreach ($data['translations'] as $translation) {
-                $post->translations()->create($translation);
+                $project->translations()->create($translation);
             }
         }
 
-        if (isset($data['tech_ids'])) {
-            $post->techs()->sync($data['tech_ids']);
+        if (isset($data['techs'])) {
+            $project->techs()->sync($data['techs']);
         }
 
-        return $post->load(['translations', 'techs']);
+        return $project->load(['translations', 'techs']);
     }
 
     /**
      * @throws Exception
      */
-    public function delete(Post $post): bool
+    public function delete(Project $project): bool
     {
-        return $post->delete();
+        return $project->delete();
     }
 
     protected function applyFilters(Builder $query, array $filters): void

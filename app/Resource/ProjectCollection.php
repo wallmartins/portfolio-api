@@ -12,23 +12,23 @@ declare(strict_types=1);
 
 namespace App\Resource;
 
-use App\Model\Post;
+use App\Model\Project;
 
 /**
- * @extends ResourceCollection<Post>
+ * @extends ResourceCollection<Project>
  */
-class PostCollection extends ResourceCollection
+class ProjectCollection extends ResourceCollection
 {
     public function toArray(): array
     {
         return [
-            'data' => $this->collection->map(function ($post) {
-                return PostPublicResource::make($post)->toArray();
+            'data' => $this->collection->map(function ($project) {
+                return ProjectPublicResource::make($project)->toArray();
             })->toArray(),
             'meta' => $this->paginator && [
                 'current_page' => $this->paginator->currentPage(),
                 'per_page' => $this->paginator->perPage(),
-                'count' => $this->collection->count(),
+                'count' => $this->paginator->count(),
             ],
         ];
     }

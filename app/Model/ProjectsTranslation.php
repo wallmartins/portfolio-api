@@ -13,32 +13,31 @@ declare(strict_types=1);
 namespace App\Model;
 
 use Carbon\Carbon;
-use Hyperf\Database\Model\Collection;
-use Hyperf\Database\Model\Relations\BelongsToMany;
-use Hyperf\Database\Model\Relations\HasMany;
 
 /**
  * @property int $id
- * @property string $slug
- * @property string $image
+ * @property int $project_id
+ * @property string $title
+ * @property string $content
+ * @property string $locale
  * @property Carbon $created_at
  * @property Carbon $updated_at
- * @property Collection<int, PostsTranslation> $translations
- * @property Collection<int, Tech> $techs
  */
-class Post extends Model
+class ProjectsTranslation extends Model
 {
     /**
      * The table associated with the model.
      */
-    protected ?string $table = 'posts';
+    protected ?string $table = 'projects_translations';
 
     /**
      * The attributes that are mass assignable.
      */
     protected array $fillable = [
-        'slug',
-        'image',
+        'project_id',
+        'title',
+        'content',
+        'locale',
     ];
 
     /**
@@ -46,24 +45,11 @@ class Post extends Model
      */
     protected array $casts = [
         'id' => 'integer',
-        'slug' => 'string',
-        'image' => 'string',
+        'project_id' => 'integer',
+        'title' => 'string',
+        'content' => 'string',
+        'locale' => 'string',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-
-    public function translations(): HasMany
-    {
-        return $this->hasMany(PostsTranslation::class);
-    }
-
-    public function techs(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Tech::class,
-            'post_tech',
-            'post_id',
-            'tech_id'
-        );
-    }
 }

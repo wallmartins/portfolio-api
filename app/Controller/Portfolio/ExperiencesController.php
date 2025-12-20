@@ -12,13 +12,31 @@ declare(strict_types=1);
 
 namespace App\Controller\Portfolio;
 
-use Hyperf\HttpServer\Contract\RequestInterface;
+use App\Request\Portfolio\GetExperienceRequest;
+use App\Resource\ExperienceCollection;
+use App\Services\ExperienceService;
+use App\Traits\RespondsWithResource;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\ResponseInterface;
+use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
 class ExperiencesController
 {
-    public function index(RequestInterface $request, ResponseInterface $response)
+    use RespondsWithResource;
+
+    #[Inject]
+    protected ResponseInterface $response;
+
+    public function __construct(
+        private readonly ExperienceService $experienceService,
+    ) {
+    }
+
+    public function index(GetExperienceRequest $request): PsrResponseInterface
     {
-        return $response->raw('Hello Hyperf!');
+        $locale = $request->validated()['locale'];
+        $experience = $this->experienceService->getAll($locale);
+
+        return $this->jsonResource(ExperienceCollection::make($experience));
     }
 }

@@ -19,24 +19,26 @@ use Hyperf\Database\Model\Relations\HasMany;
 
 /**
  * @property int $id
+ * @property string $name
  * @property string $slug
  * @property string $image
  * @property Carbon $created_at
  * @property Carbon $updated_at
- * @property Collection<int, PostsTranslation> $translations
+ * @property Collection<int, ProjectsTranslation> $translations
  * @property Collection<int, Tech> $techs
  */
-class Post extends Model
+class Project extends Model
 {
     /**
      * The table associated with the model.
      */
-    protected ?string $table = 'posts';
+    protected ?string $table = 'projects';
 
     /**
      * The attributes that are mass assignable.
      */
     protected array $fillable = [
+        'name',
         'slug',
         'image',
     ];
@@ -46,6 +48,7 @@ class Post extends Model
      */
     protected array $casts = [
         'id' => 'integer',
+        'name' => 'string',
         'slug' => 'string',
         'image' => 'string',
         'created_at' => 'datetime',
@@ -54,15 +57,15 @@ class Post extends Model
 
     public function translations(): HasMany
     {
-        return $this->hasMany(PostsTranslation::class);
+        return $this->hasMany(ProjectsTranslation::class);
     }
 
     public function techs(): BelongsToMany
     {
         return $this->belongsToMany(
             Tech::class,
-            'post_tech',
-            'post_id',
+            'project_tech',
+            'project_id',
             'tech_id'
         );
     }

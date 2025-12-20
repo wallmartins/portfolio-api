@@ -15,7 +15,7 @@ namespace App\Services;
 use App\Model\Post;
 use App\Repository\PostRepository;
 use Exception;
-use Hyperf\Database\Model\Collection;
+use Hyperf\Contract\PaginatorInterface;
 use Hyperf\HttpMessage\Exception\NotFoundHttpException;
 
 class PostService
@@ -25,28 +25,17 @@ class PostService
     ) {
     }
 
-    public function getAll(): Collection
+    public function paginate(array $filters, string $locale): PaginatorInterface
     {
-        return $this->postRepository->getAll();
+        return $this->postRepository->paginate($filters, $locale);
     }
 
-    public function getById(int $id): Post
+    public function getById(int $id, string $locale): Post
     {
-        $post = $this->postRepository->findById($id);
+        $post = $this->postRepository->getById($id, $locale);
 
         if (! $post) {
             throw new NotFoundHttpException('Post not found.');
-        }
-
-        return $post;
-    }
-
-    public function getBySlugAndLocale(string $slug, string $locale): Post
-    {
-        $post = $this->postRepository->findBySlugAndLocale($slug, $locale);
-
-        if (! $post) {
-            throw new NotFoundHttpException('Post not found for locale: {$locale}.');
         }
 
         return $post;
@@ -57,9 +46,9 @@ class PostService
         return $this->postRepository->create($data);
     }
 
-    public function update(int $id, array $data): Post
+    public function update(int $id, string $locale, array $data): Post
     {
-        $post = $this->getById($id);
+        $post = $this->getById($id, $locale);
         return $this->postRepository->update($post, $data);
     }
 

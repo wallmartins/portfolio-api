@@ -12,22 +12,20 @@ declare(strict_types=1);
 
 namespace App\Resource;
 
-use App\Model\Post;
+use App\Model\Experience;
 
 /**
- * @extends ResourceCollection<Post>
+ * @extends ResourceCollection<Experience>
  */
-class PostCollection extends ResourceCollection
+class ExperienceCollection extends ResourceCollection
 {
     public function toArray(): array
     {
         return [
-            'data' => $this->collection->map(function ($post) {
-                return PostPublicResource::make($post)->toArray();
+            'data' => $this->collection->map(function ($experience) {
+                return ExperiencePublicResource::make($experience)->toArray();
             })->toArray(),
-            'meta' => $this->paginator && [
-                'current_page' => $this->paginator->currentPage(),
-                'per_page' => $this->paginator->perPage(),
+            'meta' => [
                 'count' => $this->collection->count(),
             ],
         ];

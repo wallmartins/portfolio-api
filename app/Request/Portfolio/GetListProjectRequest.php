@@ -14,37 +14,26 @@ namespace App\Request\Portfolio;
 
 use Hyperf\Validation\Request\FormRequest;
 
-class GetPostRequest extends FormRequest
+class GetListProjectRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     */
     public function rules(): array
     {
         return [
-            'id' => 'required|string|exists:posts,id',
             'locale' => 'required|string|in:pt-BR,en-US',
         ];
     }
 
-    /**
-     * Get custom messages for validator errors.
-     */
     public function messages(): array
     {
         return [
-            'id' => 'The id is required.',
-            'locale.required' => 'The locale parameter is required',
-            'locale.string' => 'Portfolio Locale must be a string.',
-            'locale.in' => 'The locale must be pt-BR or en-US',
+            'locale.required' => 'Portfolio locale is required.',
+            'locale.string' => 'Portfolio locale must be string.',
+            'locale.in' => 'Portfolio locale must be pt-BR or en-US',
         ];
     }
 }
