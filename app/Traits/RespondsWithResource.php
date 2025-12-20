@@ -22,7 +22,7 @@ trait RespondsWithResource
      * Return a JSON response with a resource.
      */
     protected function jsonResource(
-        JsonResource|ResourceCollection|object $resource,
+        JsonResource|ResourceCollection $resource,
         int $status = 200
     ): PsrResponseInterface {
         return $this->response->json($resource->toArray())->withStatus($status);
@@ -31,7 +31,7 @@ trait RespondsWithResource
     /**
      * Return a created response (201) with a resource.
      */
-    protected function created(JsonResource|object $resource): PsrResponseInterface
+    protected function created(JsonResource $resource): PsrResponseInterface
     {
         return $this->jsonResource($resource, 201);
     }

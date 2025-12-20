@@ -12,13 +12,34 @@ declare(strict_types=1);
 
 namespace App\Resource;
 
+use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Model\Collection;
+use Hyperf\DbConnection\Model\Model;
 
+/**
+ * @template TModel of Model
+ */
 abstract class ResourceCollection
 {
-    public function __construct(
-        protected Collection $collection
-    ) {
+    /**
+     * @var Collection<int, TModel>
+     */
+    protected Collection $collection;
+
+    protected ?PaginatorInterface $paginator = null;
+
+    /**
+     * @param Collection<int, TModel>|PaginatorInterface $resource
+     */
+    public function __construct(Collection|PaginatorInterface $resource)
+    {
+        if ($resource instanceof PaginatorInterface) {
+            $this->paginator = $resource;
+            $this->collection = $resource->getCollection();
+            return;
+        }
+
+        $this->collection = $resource;
     }
 
     /**
@@ -27,10 +48,10 @@ abstract class ResourceCollection
     abstract public function toArray(): array;
 
     /**
-     * Create a new resource collection instance.
+     * @param Collection<int, TModel>|PaginatorInterface $resource
      */
-    public static function make(Collection $collection): static
+    public static function make(Collection|PaginatorInterface $resource): static
     {
-        return new static($collection);
+        return new static($resource);
     }
 }

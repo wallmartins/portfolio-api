@@ -11,15 +11,15 @@ declare(strict_types=1);
  */
 use App\Controller\Admin\AboutController as AdminAboutController;
 use App\Controller\Admin\AuthController;
-use App\Controller\Admin\BlogController as AdminBlogController;
 use App\Controller\Admin\ExperiencesController as AdminExperiencesController;
+use App\Controller\Admin\PostController as AdminBlogController;
 use App\Controller\Admin\ProjectsController as AdminProjectsController;
 use App\Controller\Admin\SocialController as AdminSocialController;
 use App\Controller\Admin\TechsController as AdminTechsController;
 use App\Controller\Portfolio\AboutController;
-use App\Controller\Portfolio\BlogController;
 use App\Controller\Portfolio\ChatController;
 use App\Controller\Portfolio\ExperiencesController;
+use App\Controller\Portfolio\PostController;
 use App\Controller\Portfolio\ProjectsController;
 use App\Controller\Portfolio\SocialController;
 use App\Controller\Portfolio\TechsController;
@@ -31,9 +31,11 @@ Router::addRoute(['GET', 'POST', 'HEAD'], '/', 'App\Controller\IndexController@i
 
 Router::addGroup('/portfolio/', function () {
     Router::get('about', [AboutController::class, 'index', ['as' => 'portfolio.about']]);
-    Router::get('blog', [BlogController::class, 'index', ['as' => 'portfolio.blog']]);
+    Router::get('blog', [PostController::class, 'index', ['as' => 'portfolio.index.blog']]);
+    Router::get('blog/{id}', [PostController::class, 'show', ['as' => 'portfolio.show.blog']]);
     Router::get('experiences', [ExperiencesController::class, 'index', ['as' => 'portfolio.experiences']]);
-    Router::get('projects', [ProjectsController::class, 'index', ['as' => 'portfolio.projects']]);
+    Router::get('projects', [ProjectsController::class, 'index', ['as' => 'portfolio.index.projects']]);
+    Router::get('projects/{id}', [ProjectsController::class, 'show', ['as' => 'portfolio.show.projects']]);
     Router::get('social', [SocialController::class, 'index', ['as' => 'portfolio.social']]);
     Router::get('techs', [TechsController::class, 'index', ['as' => 'portfolio.techs']]);
     Router::post('chat', [ChatController::class, 'chat', ['as' => 'portfolio.chat']]);

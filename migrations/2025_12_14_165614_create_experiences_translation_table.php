@@ -24,7 +24,6 @@ return new class extends Migration {
             $table->unsignedBigInteger('experience_id');
             $table->string('locale', 5);
             $table->string('position');
-            $table->string('company_name');
             $table->text('description');
             $table->timestamps();
 

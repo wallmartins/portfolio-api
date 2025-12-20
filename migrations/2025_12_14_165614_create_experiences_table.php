@@ -21,11 +21,9 @@ return new class extends Migration {
     {
         Schema::create('experiences', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('position');
             $table->string('company_name');
             $table->date('start_date');
             $table->date('end_date')->nullable();
-            $table->text('description');
             $table->timestamps();
         });
     }

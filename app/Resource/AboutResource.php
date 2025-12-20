@@ -12,6 +12,11 @@ declare(strict_types=1);
 
 namespace App\Resource;
 
+use App\Model\About;
+
+/**
+ * @extends JsonResource<About>
+ */
 class AboutResource extends JsonResource
 {
     /**

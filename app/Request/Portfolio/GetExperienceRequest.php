@@ -14,29 +14,20 @@ namespace App\Request\Portfolio;
 
 use Hyperf\Validation\Request\FormRequest;
 
-class GetAboutRequest extends FormRequest
+class GetExperienceRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     */
     public function rules(): array
     {
         return [
-            'locale' => 'required|string|in:pt-BR,en-US',
+            'locale' => 'required|string',
         ];
     }
 
-    /**
-     * Get custom messages for validator errors.
-     */
     public function messages(): array
     {
         return [

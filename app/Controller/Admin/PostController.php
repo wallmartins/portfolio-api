@@ -10,12 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace App\Controller\Portfolio;
+namespace App\Controller\Admin;
 
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 
-class BlogController
+class PostController
 {
     public function index(RequestInterface $request, ResponseInterface $response)
     {

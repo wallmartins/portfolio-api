@@ -12,24 +12,21 @@ declare(strict_types=1);
 
 namespace App\Resource;
 
-use App\Model\Social;
+use App\Model\Experience;
 
 /**
- * @extends ResourceCollection<Social>
+ * @extends ResourceCollection<Experience>
  */
-class SocialCollection extends ResourceCollection
+class ExperienceCollection extends ResourceCollection
 {
-    /**
-     * Transform the resource collection into an array.
-     */
     public function toArray(): array
     {
         return [
-            'data' => $this->collection->map(function ($social) {
-                return SocialResource::make($social)->toArray();
+            'data' => $this->collection->map(function ($experience) {
+                return ExperiencePublicResource::make($experience)->toArray();
             })->toArray(),
             'meta' => [
-                'total' => $this->collection->count(),
+                'count' => $this->collection->count(),
             ],
         ];
     }

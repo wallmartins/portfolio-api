@@ -14,8 +14,14 @@ namespace App\Resource;
 
 use Hyperf\DbConnection\Model\Model;
 
+/**
+ * @template TModel of Model
+ */
 abstract class JsonResource
 {
+    /**
+     * @param TModel $resource
+     */
     public function __construct(
         protected Model $resource
     ) {
@@ -28,6 +34,8 @@ abstract class JsonResource
 
     /**
      * Create a new resource instance.
+     *
+     * @param TModel $resource
      */
     public static function make(Model $resource): static
     {

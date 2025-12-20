@@ -14,7 +14,7 @@ namespace App\Request\Portfolio;
 
 use Hyperf\Validation\Request\FormRequest;
 
-class GetAboutRequest extends FormRequest
+class GetListPostRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -31,6 +31,11 @@ class GetAboutRequest extends FormRequest
     {
         return [
             'locale' => 'required|string|in:pt-BR,en-US',
+            'page' => 'required|integer|min:1',
+            'per_page' => 'required|integer|min:1',
+            'search' => 'nullable|string|in:all,none',
+            'order_by' => 'nullable|string|in:created_at,title',
+            'order' => 'nullable|string|in:asc,desc',
         ];
     }
 
@@ -40,6 +45,8 @@ class GetAboutRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'page' => 'The page parameter is required',
+            'per_page' => 'The per_page parameter is required',
             'locale.required' => 'The locale parameter is required',
             'locale.string' => 'Portfolio Locale must be a string.',
             'locale.in' => 'The locale must be pt-BR or en-US',

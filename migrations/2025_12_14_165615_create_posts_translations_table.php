@@ -23,6 +23,8 @@ return new class extends Migration {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('post_id');
             $table->string('locale', 5);
+            $table->string('title');
+            $table->string('subtitle')->nullable();
             $table->text('content');
             $table->timestamps();
 

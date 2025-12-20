@@ -14,8 +14,9 @@ namespace App\Services;
 
 use App\Model\Social;
 use App\Repository\SocialRepository;
+use Exception;
 use Hyperf\Database\Model\Collection;
-use Hyperf\HttpMessage\Exception\NotFoundException;
+use Hyperf\Di\Exception\NotFoundException;
 
 class SocialService
 {
@@ -34,6 +35,7 @@ class SocialService
 
     /**
      * Get a social media link by ID.
+     * @throws NotFoundException
      */
     public function getById(int $id): Social
     {
@@ -56,6 +58,7 @@ class SocialService
 
     /**
      * Update a social media link.
+     * @throws NotFoundException
      */
     public function update(int $id, array $data): Social
     {
@@ -65,6 +68,8 @@ class SocialService
 
     /**
      * Delete a social media link.
+     * @throws NotFoundException
+     * @throws Exception
      */
     public function delete(int $id): bool
     {
