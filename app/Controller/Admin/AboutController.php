@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Request\Admin\CreateAboutRequest;
-use App\Request\Admin\UpdateAboutRequest;
-use App\Resource\AboutResource;
-use App\Services\AboutService;
+use App\Request\Admin\About\CreateAboutRequest;
+use App\Request\Admin\About\UpdateAboutRequest;
+use App\Resource\About\AboutResource;
+use App\Services\About\AboutService;
 use App\Traits\RespondsWithResource;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\ResponseInterface;

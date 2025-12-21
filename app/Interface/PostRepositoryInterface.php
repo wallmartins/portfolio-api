@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace App\Interface;
 
-use App\Model\Post;
+use App\Model\Blog\Post;
 use Hyperf\Contract\PaginatorInterface;
 
 interface PostRepositoryInterface

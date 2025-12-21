@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Portfolio;
 
-use App\Resource\SocialCollection;
-use App\Services\SocialService;
+use App\Resource\Social\SocialCollection;
+use App\Services\Social\SocialService;
 use App\Traits\RespondsWithResource;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\ResponseInterface;

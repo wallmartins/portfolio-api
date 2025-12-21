@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Request\Admin\CreateSocialRequest;
-use App\Request\Admin\UpdateSocialRequest;
-use App\Resource\SocialCollection;
-use App\Resource\SocialResource;
-use App\Services\SocialService;
+use App\Request\Admin\Social\CreateSocialRequest;
+use App\Request\Admin\Social\UpdateSocialRequest;
+use App\Resource\Social\SocialCollection;
+use App\Resource\Social\SocialResource;
+use App\Services\Social\SocialService;
 use App\Traits\RespondsWithResource;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\ResponseInterface;

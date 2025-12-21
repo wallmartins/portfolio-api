@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Portfolio;
 
-use App\Request\Portfolio\GetListProjectRequest;
-use App\Request\Portfolio\GetProjectRequest;
-use App\Resource\ProjectCollection;
-use App\Resource\ProjectPublicResource;
-use App\Services\ProjectService;
+use App\Request\Portfolio\Project\GetListProjectRequest;
+use App\Request\Portfolio\Project\GetProjectRequest;
+use App\Resource\Project\ProjectCollection;
+use App\Resource\Project\ProjectPublicResource;
+use App\Services\Project\ProjectService;
 use App\Traits\RespondsWithResource;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\ResponseInterface;

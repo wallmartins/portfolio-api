@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace App\Controller\Portfolio;
 
-use App\Request\Portfolio\GetAboutRequest;
-use App\Resource\AboutResource;
-use App\Services\AboutService;
+use App\Request\Portfolio\About\GetAboutRequest;
+use App\Resource\About\AboutResource;
+use App\Services\About\AboutService;
 use App\Traits\RespondsWithResource;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Exception\NotFoundException;

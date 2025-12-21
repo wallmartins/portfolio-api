@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace App\Interface;
 
-use App\Model\Project;
+use App\Model\Project\Project;
 use Hyperf\Contract\PaginatorInterface;
 
 interface ProjectRepositoryInterface
