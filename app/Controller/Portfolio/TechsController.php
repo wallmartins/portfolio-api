@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Portfolio;
 
-use App\Resource\TechCollection;
-use App\Services\TechService;
+use App\Resource\Tech\TechCollection;
+use App\Services\Tech\TechService;
 use App\Traits\RespondsWithResource;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\ResponseInterface;

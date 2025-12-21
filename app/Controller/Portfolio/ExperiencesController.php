@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace App\Controller\Portfolio;
 
-use App\Request\Portfolio\GetExperienceRequest;
-use App\Resource\ExperienceCollection;
-use App\Services\ExperienceService;
+use App\Request\Portfolio\Experience\GetExperienceRequest;
+use App\Resource\Experience\ExperienceCollection;
+use App\Services\Experience\ExperienceService;
 use App\Traits\RespondsWithResource;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\ResponseInterface;

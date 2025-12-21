@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Resource\AuthResource;
-use App\Services\AuthService;
+use App\Resource\Auth\AuthResource;
+use App\Services\Auth\AuthService;
 use App\Traits\RespondsWithResource;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\ResponseInterface;

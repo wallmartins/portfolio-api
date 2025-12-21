@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Portfolio;
 
-use App\Request\Portfolio\GetListPostRequest;
-use App\Request\Portfolio\GetPostRequest;
-use App\Resource\PostCollection;
-use App\Resource\PostPublicResource;
-use App\Services\PostService;
+use App\Request\Portfolio\Blog\GetListPostRequest;
+use App\Request\Portfolio\Blog\GetPostRequest;
+use App\Resource\Blog\PostCollection;
+use App\Resource\Blog\PostPublicResource;
+use App\Services\Blog\PostService;
 use App\Traits\RespondsWithResource;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\ResponseInterface;
