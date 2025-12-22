@@ -12,25 +12,24 @@ declare(strict_types=1);
 
 namespace App\Resource\Auth;
 
-use App\Model\User\User;
-use App\Resource\User\UserResource;
+use App\Contracts\Arrayable;
 
-class AuthResource
+class AuthResource implements Arrayable
 {
     public function __construct(
-        private readonly User $user,
+        private readonly string $name,
+        private readonly string $email,
         private readonly string $accessToken,
-        private readonly string $refreshToken,
-        private readonly int $expiresIn = 3600
+        private readonly ?string $avatar = null
     ) {
     }
 
     /**
      * Create a new auth resource instance.
      */
-    public static function make(User $user, string $accessToken, string $refreshToken, int $expiresIn = 3600): self
+    public static function make(string $name, string $email, string $accessToken, ?string $avatar = null): self
     {
-        return new self($user, $accessToken, $refreshToken, $expiresIn);
+        return new self($name, $email, $accessToken, $avatar);
     }
 
     /**
@@ -38,12 +37,16 @@ class AuthResource
      */
     public function toArray(): array
     {
-        return [
-            'user' => UserResource::make($this->user)->toArray(),
+        $data = [
+            'name' => $this->name,
+            'email' => $this->email,
             'access_token' => $this->accessToken,
-            'refresh_token' => $this->refreshToken,
-            'expires_in' => $this->expiresIn,
-            'token_type' => 'Bearer',
         ];
+
+        if ($this->avatar !== null) {
+            $data['avatar'] = $this->avatar;
+        }
+
+        return $data;
     }
 }

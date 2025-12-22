@@ -23,7 +23,7 @@ class TechRepository
         return Tech::all();
     }
 
-    public function findById(int $id): ?Tech
+    public function getById(int $id): ?Tech
     {
         return Tech::find($id);
     }

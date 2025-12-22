@@ -14,21 +14,27 @@ namespace App\Repository\Experience;
 
 use App\Model\Experience\Experience;
 use Exception;
-use Hyperf\Collection\Collection;
+use Hyperf\Database\Model\Collection;
 
 class ExperienceRepository
 {
-    public function getAll(): Collection
+    public function getAll(string $locale): Collection
     {
         return Experience::query()
-            ->with(['translations', 'techs'])
+            ->with(['translations' => function ($query) use ($locale) {
+                $query->where('locale', $locale);
+            }])
+            ->with(['techs'])
             ->get();
     }
 
-    public function getById(int $id): ?Experience
+    public function getById(int $id, string $locale): ?Experience
     {
         return Experience::query()
-            ->with(['translations', 'techs'])
+            ->with(['translations' => function ($query) use ($locale, $id) {
+                $query->where('locale', $locale)->where('experience_id', $id);
+            }])
+            ->with(['techs'])
             ->find($id);
     }
 
@@ -53,8 +59,12 @@ class ExperienceRepository
 
     public function update(Experience $experience, array $data): Experience
     {
-        if (isset($data['company_name'])) {
-            $experience->update(['company_name' => $data['company_name']]);
+        $directFields = array_intersect_key($data, array_flip([
+            'company_name', 'start_date', 'end_date',
+        ]));
+
+        if (! empty($directFields)) {
+            $experience->update($directFields);
         }
 
         if (isset($data['translations'])) {

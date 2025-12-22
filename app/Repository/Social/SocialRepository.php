@@ -29,7 +29,7 @@ class SocialRepository
     /**
      * Find a social media link by ID.
      */
-    public function findById(int $id): ?Social
+    public function getById(int $id): ?Social
     {
         return Social::find($id);
     }

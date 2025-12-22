@@ -12,35 +12,20 @@ declare(strict_types=1);
 
 namespace App\Request\Admin\Blog;
 
-use Hyperf\Validation\Request\FormRequest;
-
-class CreatePostRequest extends FormRequest
+class CreatePostRequest extends BasePostRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     public function rules(): array
     {
         return [
-            'slug' => 'required|string|unique:posts,slug',
-            'translations' => 'required|array|min:1',
-            'translations.*.locale' => 'required|string|in:pt-BR,en-US',
-            'translations.*.title' => 'required|string',
-            'translations.*.content' => 'required|string',
-            'tech_ids' => 'required|array|min:1',
-            'tech_ids.*' => 'required|integer|exists:techs,id',
-        ];
-    }
-
-    public function messages(): array
-    {
-        return [
-            'slug.unique' => 'A post with the same slug already exists.',
-            'translations.required' => 'At least one translation field is required.',
-            'locale.*.locale.in' => 'Locale must be pt-BR or en-US.',
-            'tech_ids.*.exists' => 'One or more technologies do not exist.',
+            'slug' => 'bail|required|string|unique:posts,slug',
+            'image' => 'nullable|string',
+            'translations' => 'bail|required|array|min:1',
+            'translations.*.locale' => 'bail|required|string|in:pt-BR,en-US',
+            'translations.*.title' => 'bail|required|string',
+            'translations.*.subtitle' => 'nullable|string',
+            'translations.*.content' => 'bail|required|string',
+            'tech_ids' => 'bail|required|array|min:1',
+            'tech_ids.*' => 'bail|required|integer|exists:techs,id',
         ];
     }
 }

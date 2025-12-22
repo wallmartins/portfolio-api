@@ -12,12 +12,13 @@ declare(strict_types=1);
 
 namespace App\Resource;
 
+use App\Contracts\Arrayable;
 use Hyperf\DbConnection\Model\Model;
 
 /**
  * @template TModel of Model
  */
-abstract class JsonResource
+abstract class JsonResource implements Arrayable
 {
     /**
      * @param TModel $resource

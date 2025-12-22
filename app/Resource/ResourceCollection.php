@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace App\Resource;
 
+use App\Contracts\Arrayable;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Model\Collection;
 use Hyperf\DbConnection\Model\Model;
@@ -19,7 +20,7 @@ use Hyperf\DbConnection\Model\Model;
 /**
  * @template TModel of Model
  */
-abstract class ResourceCollection
+abstract class ResourceCollection implements Arrayable
 {
     /**
      * @var Collection<int, TModel>
