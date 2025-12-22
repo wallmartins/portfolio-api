@@ -57,7 +57,7 @@ class PostService
      */
     public function delete(int $id): bool
     {
-        $post = $this->getById($id);
+        $post = Post::find($id);
         return $this->postRepository->delete($post);
     }
 }

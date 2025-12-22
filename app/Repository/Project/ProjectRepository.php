@@ -64,8 +64,12 @@ class ProjectRepository implements ProjectRepositoryInterface
 
     public function update(Project $project, array $data): Project
     {
-        if (isset($data['slug'])) {
-            $project->update(['slug' => $data['slug']]);
+        $directFields = array_intersect_key($data, array_flip([
+            'slug', 'name', 'image',
+        ]));
+
+        if (! empty($directFields)) {
+            $project->update($directFields);
         }
 
         if (isset($data['translations'])) {

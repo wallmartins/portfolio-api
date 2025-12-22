@@ -30,9 +30,12 @@ class TechService
         return $this->techRepository->getAll();
     }
 
+    /**
+     * @throws NotFoundException
+     */
     public function getById(int $id): Tech
     {
-        $tech = $this->techRepository->findById($id);
+        $tech = $this->techRepository->getById($id);
 
         if (! $tech) {
             throw new NotFoundException('Tech not found');

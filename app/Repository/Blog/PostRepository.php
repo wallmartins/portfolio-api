@@ -64,8 +64,12 @@ class PostRepository implements PostRepositoryInterface
 
     public function update(Post $post, array $data): Post
     {
-        if (isset($data['slug'])) {
-            $post->update(['slug' => $data['slug']]);
+        $directFields = array_intersect_key($data, array_flip([
+            'slug', 'image',
+        ]));
+
+        if (! empty($directFields)) {
+            $post->update($directFields);
         }
 
         if (isset($data['translations'])) {

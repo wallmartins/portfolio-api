@@ -18,6 +18,7 @@ use App\Resource\About\AboutResource;
 use App\Services\About\AboutService;
 use App\Traits\RespondsWithResource;
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
@@ -54,6 +55,7 @@ class AboutController
 
     /**
      * Get a specific about entry.
+     * @throws NotFoundException
      */
     public function show(int $id): PsrResponseInterface
     {
@@ -73,6 +75,7 @@ class AboutController
 
     /**
      * Update an about entry.
+     * @throws NotFoundException
      */
     public function update(int $id, UpdateAboutRequest $request): PsrResponseInterface
     {
@@ -83,6 +86,7 @@ class AboutController
 
     /**
      * Delete an about entry.
+     * @throws NotFoundException
      */
     public function destroy(int $id): PsrResponseInterface
     {

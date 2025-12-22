@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace App\Middleware;
 
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use Hyperf\HttpServer\Contract\ResponseInterface as Response;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -42,8 +43,8 @@ class AuthMiddleware implements MiddlewareInterface
         $token = substr($authHeader, 7);
 
         try {
-            $headers = env('JWT_METHOD');
-            $payload = JWT::decode($token, env('JWT_SECRET_KEY'), $headers);
+            $key = new Key(env('JWT_SECRET_KEY'), 'HS256');
+            $payload = JWT::decode($token, $key);
         } catch (Throwable $th) {
             return $this->unauthorized('Invalid Token on Header Authorization');
         }

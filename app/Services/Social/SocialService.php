@@ -39,7 +39,7 @@ class SocialService
      */
     public function getById(int $id): Social
     {
-        $social = $this->socialRepository->findById($id);
+        $social = $this->socialRepository->getById($id);
 
         if (! $social) {
             throw new NotFoundException('Social media link not found');

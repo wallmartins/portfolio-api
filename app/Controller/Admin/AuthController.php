@@ -57,13 +57,13 @@ class AuthController
 
         $authData = $this->authService->findOrCreateUser($userData);
 
-        $resource = AuthResource::make(
-            $authData['user'],
-            $authData['accessToken'],
-            $authData['refreshToken'],
-            $authData['expiresIn']
+        return $this->jsonResource(
+            AuthResource::make(
+                name: $authData['user']->name,
+                email: $authData['user']->email,
+                accessToken: $authData['accessToken'],
+                avatar: $githubUser->getAvatar()
+            )
         );
-
-        return $this->jsonResource($resource);
     }
 }

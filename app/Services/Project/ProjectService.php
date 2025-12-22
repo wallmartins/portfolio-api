@@ -54,8 +54,9 @@ class ProjectService
     /**
      * @throws Exception
      */
-    public function delete(Project $project): bool
+    public function delete(int $id): bool
     {
+        $project = Project::find($id);
         return $this->projectRepository->delete($project);
     }
 }

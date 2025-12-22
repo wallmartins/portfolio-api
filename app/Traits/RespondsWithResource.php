@@ -12,8 +12,7 @@ declare(strict_types=1);
 
 namespace App\Traits;
 
-use App\Resource\JsonResource;
-use App\Resource\ResourceCollection;
+use App\Contracts\Arrayable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
 trait RespondsWithResource
@@ -22,7 +21,7 @@ trait RespondsWithResource
      * Return a JSON response with a resource.
      */
     protected function jsonResource(
-        JsonResource|ResourceCollection $resource,
+        Arrayable $resource,
         int $status = 200
     ): PsrResponseInterface {
         return $this->response->json($resource->toArray())->withStatus($status);
@@ -31,7 +30,7 @@ trait RespondsWithResource
     /**
      * Return a created response (201) with a resource.
      */
-    protected function created(JsonResource $resource): PsrResponseInterface
+    protected function created(Arrayable $resource): PsrResponseInterface
     {
         return $this->jsonResource($resource, 201);
     }

@@ -39,7 +39,7 @@ class AboutRepository
     /**
      * Find an about entry by ID.
      */
-    public function findById(int $id): ?About
+    public function getById(int $id): ?About
     {
         return About::find($id);
     }

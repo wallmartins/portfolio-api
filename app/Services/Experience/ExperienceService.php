@@ -26,22 +26,12 @@ class ExperienceService
 
     public function getAll(string $locale): Collection
     {
-        return Experience::query()
-            ->with(['translations' => function ($query) use ($locale) {
-                $query->where('locale', $locale);
-            }])
-            ->with(['techs'])
-            ->get();
+        return $this->experienceRepository->getAll($locale);
     }
 
-    public function getById(int $id, string $locale = 'pt-BR'): Experience
+    public function getById(int $id, string $locale): Experience
     {
-        return Experience::query()
-            ->with(['translations' => function ($query) use ($locale, $id) {
-                $query->where('locale', $locale)->where('experience_id', $id);
-            }])
-            ->with(['techs'])
-            ->find($id);
+        return $this->experienceRepository->getById($id, $locale);
     }
 
     public function create(array $data): Experience
@@ -49,9 +39,9 @@ class ExperienceService
         return $this->experienceRepository->create($data);
     }
 
-    public function update(int $id, array $data): Experience
+    public function update(int $id, string $locale, array $data): Experience
     {
-        $experience = $this->getById($id);
+        $experience = $this->experienceRepository->getById($id, $locale);
         return $this->experienceRepository->update($experience, $data);
     }
 
@@ -60,7 +50,7 @@ class ExperienceService
      */
     public function delete(int $id): bool
     {
-        $experience = $this->getById($id);
+        $experience = Experience::find($id);
         return $this->experienceRepository->delete($experience);
     }
 }

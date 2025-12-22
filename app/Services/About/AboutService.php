@@ -14,6 +14,7 @@ namespace App\Services\About;
 
 use App\Model\About\About;
 use App\Repository\About\AboutRepository;
+use Exception;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Di\Exception\NotFoundException;
 
@@ -49,10 +50,11 @@ class AboutService
 
     /**
      * Get an about entry by ID.
+     * @throws NotFoundException
      */
     public function getById(int $id): About
     {
-        $about = $this->aboutRepository->findById($id);
+        $about = $this->aboutRepository->getById($id);
 
         if (! $about) {
             throw new NotFoundException('About information not found');
@@ -82,6 +84,7 @@ class AboutService
     /**
      * Delete an about entry.
      * @throws NotFoundException
+     * @throws Exception
      */
     public function delete(int $id): bool
     {

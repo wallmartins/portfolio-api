@@ -19,6 +19,7 @@ use App\Resource\Social\SocialResource;
 use App\Services\Social\SocialService;
 use App\Traits\RespondsWithResource;
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
@@ -45,6 +46,7 @@ class SocialController
 
     /**
      * Get a specific social media link.
+     * @throws NotFoundException
      */
     public function show(int $id): PsrResponseInterface
     {
@@ -64,6 +66,7 @@ class SocialController
 
     /**
      * Update a social media link.
+     * @throws NotFoundException
      */
     public function update(int $id, UpdateSocialRequest $request): PsrResponseInterface
     {
@@ -74,6 +77,7 @@ class SocialController
 
     /**
      * Delete a social media link.
+     * @throws NotFoundException
      */
     public function destroy(int $id): PsrResponseInterface
     {
