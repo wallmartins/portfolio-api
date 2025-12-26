@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Pest runner for Hyperf with Swoole support
+ */
+
+// Load the Hyperf bootstrap
+require __DIR__ . '/../test/bootstrap.php';
+
+// Execute Pest
+$status = require __DIR__ . '/../vendor/bin/pest';
+
+exit($status);

@@ -1,63 +1,290 @@
-# Introduction
+# Portfolio API
 
-This is a skeleton application using the Hyperf framework. This application is meant to be used as a starting place for those looking to get their feet wet with Hyperf Framework.
+API RESTful moderna e de alta performance para gerenciamento de portfólio, construída com [Hyperf Framework](https://hyperf.io) (PHP/Swoole).
 
-# Requirements
+## 📋 Sobre o Projeto
 
-Hyperf has some requirements for the system environment, it can only run under Linux and Mac environment, but due to the development of Docker virtualization technology, Docker for Windows can also be used as the running environment under Windows.
+Esta é uma API completa para gerenciar um portfólio pessoal, incluindo projetos, blog posts, experiências profissionais, tecnologias e redes sociais. A aplicação utiliza autenticação via GitHub OAuth e JWT para rotas administrativas.
 
-The various versions of Dockerfile have been prepared for you in the [hyperf/hyperf-docker](https://github.com/hyperf/hyperf-docker) project, or directly based on the already built [hyperf/hyperf](https://hub.docker.com/r/hyperf/hyperf) Image to run.
+### Principais Funcionalidades
 
-When you don't want to use Docker as the basis for your running environment, you need to make sure that your operating environment meets the following requirements:  
+- ✅ **Gerenciamento de Projetos** - CRUD completo de projetos com traduções
+- ✅ **Sistema de Blog** - Posts com suporte a múltiplos idiomas
+- ✅ **Experiências Profissionais** - Histórico de experiências com tecnologias
+- ✅ **Tecnologias** - Catálogo de skills e tecnologias
+- ✅ **Redes Sociais** - Links para perfis sociais
+- ✅ **Autenticação GitHub OAuth** - Login seguro via GitHub
+- ✅ **Autorização JWT** - Proteção de rotas administrativas
+- ✅ **Suporte a Traduções** - Conteúdo multilíngue (i18n)
+- ✅ **Cache Redis** - Performance otimizada
+- ✅ **API REST** - Endpoints bem estruturados e documentados
 
- - PHP >= 8.1
- - Any of the following network engines
-   - Swoole PHP extension >= 5.0，with `swoole.use_shortname` set to `Off` in your `php.ini`
-   - Swow PHP extension >= 1.3
- - JSON PHP extension
- - Pcntl PHP extension
- - OpenSSL PHP extension （If you need to use the HTTPS）
- - PDO PHP extension （If you need to use the MySQL Client）
- - Redis PHP extension （If you need to use the Redis Client）
- - Protobuf PHP extension （If you need to use the gRPC Server or Client）
+## 🏗️ Arquitetura e Tecnologias
 
-# Installation using Composer
+### Stack Principal
 
-The easiest way to create a new Hyperf project is to use [Composer](https://getcomposer.org/). If you don't have it already installed, then please install as per [the documentation](https://getcomposer.org/download/).
+- **Framework**: [Hyperf 3.1](https://hyperf.io) - Framework assíncrono de alta performance
+- **Runtime**: [Swoole](https://www.swoole.co.uk/) - Extension PHP para programação assíncrona
+- **PHP**: 8.3+
+- **Banco de Dados**:
+  - SQLite (desenvolvimento)
+  - PostgreSQL (produção)
+- **Cache**: Redis 7
+- **Autenticação**: GitHub OAuth + JWT
 
-To create your new Hyperf project:
+### Estrutura do Projeto
 
-```bash
-composer create-project hyperf/hyperf-skeleton path/to/install
+```
+portfolio-api/
+├── app/
+│   ├── Command/          # Comandos CLI customizados
+│   ├── Constants/        # Constantes e códigos de erro
+│   ├── Contracts/        # Interfaces e contratos
+│   ├── Controller/       # Controllers HTTP
+│   │   ├── Admin/        # Controllers administrativos (protegidos)
+│   │   └── Portfolio/    # Controllers públicos
+│   ├── Database/
+│   │   └── Seeds/        # Seeders para popular o banco
+│   ├── DTO/              # Data Transfer Objects
+│   ├── Exception/        # Exceções customizadas
+│   ├── Interface/        # Interfaces de repositórios
+│   ├── Middleware/       # Middlewares HTTP
+│   ├── Model/            # Models Eloquent
+│   ├── Repository/       # Implementações de repositórios
+│   ├── Request/          # Form Request Validations
+│   ├── Resource/         # API Resources (transformers)
+│   ├── Services/         # Lógica de negócio
+│   └── Traits/           # Traits reutilizáveis
+├── config/               # Arquivos de configuração
+│   ├── autoload/         # Configurações carregadas automaticamente
+│   └── routes.php        # Definição de rotas
+├── docker/               # Arquivos Docker
+│   └── scripts/          # Scripts de inicialização
+├── migrations/           # Migrations do banco de dados
+├── runtime/              # Arquivos temporários e cache
+├── storage/              # Arquivos de armazenamento
+├── docker-compose.yml    # Docker Compose (desenvolvimento)
+├── docker-compose.prod.yml # Docker Compose (produção)
+├── Dockerfile            # Multi-stage Dockerfile
+└── Makefile              # Comandos facilitadores
 ```
 
-If your development environment is based on Docker you can use the official Composer image to create a new Hyperf project:
+## 🚀 Início Rápido
+
+### Pré-requisitos
+
+- [Docker](https://www.docker.com/get-started) e Docker Compose
+- [Make](https://www.gnu.org/software/make/) (opcional, mas recomendado)
+
+### Instalação
+
+1. **Clone o repositório**
 
 ```bash
-docker run --rm -it -v $(pwd):/app composer create-project --ignore-platform-reqs hyperf/hyperf-skeleton path/to/install
+git clone <repository-url>
+cd portfolio-api
 ```
 
-# Getting started
-
-Once installed, you can run the server immediately using the command below.
+2. **Configure as variáveis de ambiente**
 
 ```bash
-cd path/to/install
-php bin/hyperf.php start
+cp .env.example .env
 ```
 
-Or if in a Docker based environment you can use the `docker-compose.yml` provided by the template:
+Edite o arquivo `.env` e configure:
+- `JWT_SECRET_KEY` - Chave secreta para JWT (gere com: `php -r "echo base64_encode(random_bytes(32));"`)
+- `ADMIN_ID` - Seu GitHub ID (obtenha em: https://api.github.com/users/seu-username)
+
+3. **Inicie o ambiente de desenvolvimento**
 
 ```bash
-cd path/to/install
-docker-compose up
+make init
 ```
 
-This will start the cli-server on port `9501`, and bind it to all network interfaces. You can then visit the site at `http://localhost:9501/` which will bring up Hyperf default home page.
+Ou manualmente:
 
-## Hints
+```bash
+docker-compose up -d
+docker-compose exec app sh /opt/www/docker/scripts/init-dev.sh
+```
 
-- A nice tip is to rename `hyperf-skeleton` of files like `composer.json` and `docker-compose.yml` to your actual project name.
-- Take a look at `config/routes.php` and `app/Controller/IndexController.php` to see an example of a HTTP entrypoint.
+4. **Acesse a aplicação**
 
-**Remember:** you can always replace the contents of this README.md file to something that fits your project description.
+A API estará disponível em: http://localhost:9501
+
+## 📚 Comandos Disponíveis
+
+O projeto inclui um `Makefile` com comandos facilitadores:
+
+```bash
+make help              # Lista todos os comandos disponíveis
+make dev               # Inicia ambiente de desenvolvimento
+make prod              # Inicia ambiente de produção
+make build             # Builda as imagens Docker
+make down              # Para todos os serviços
+make restart           # Reinicia os serviços
+make logs              # Visualiza logs da aplicação
+make shell             # Acessa shell do container
+make db-migrate        # Executa migrations
+make db-seed           # Executa seeders
+make db-reset          # Reset completo do banco (fresh + seed)
+make composer-install  # Instala dependências
+make test              # Executa testes
+make cs-fix            # Corrige estilo de código
+make analyse           # Análise estática (PHPStan)
+```
+
+## 🔌 Endpoints da API
+
+### Rotas Públicas (Portfolio)
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| GET | `/portfolio/about` | Informações sobre mim |
+| GET | `/portfolio/blog` | Lista de posts |
+| GET | `/portfolio/blog/{id}` | Detalhes de um post |
+| GET | `/portfolio/experiences` | Experiências profissionais |
+| GET | `/portfolio/projects` | Lista de projetos |
+| GET | `/portfolio/projects/{id}` | Detalhes de um projeto |
+| GET | `/portfolio/social` | Links de redes sociais |
+| GET | `/portfolio/techs` | Tecnologias/Skills |
+| POST | `/portfolio/chat` | Endpoint de chat |
+
+### Rotas de Autenticação
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| GET | `/auth/github/redirect` | Inicia OAuth GitHub |
+| GET | `/auth/github/callback` | Callback OAuth GitHub |
+| POST | `/auth/logout` | Logout (requer auth) |
+| PUT | `/auth/me` | Atualiza dados do usuário (requer auth) |
+
+### Rotas Administrativas (requerem autenticação JWT)
+
+Todas as rotas abaixo requerem header: `Authorization: Bearer <token>`
+
+**Blog**
+- `GET /blog` - Lista posts
+- `GET /blog/{id}` - Visualiza post
+- `POST /blog/create` - Cria post
+- `PUT /blog/{id}` - Atualiza post
+- `DELETE /blog/{id}` - Deleta post
+
+**Projetos**
+- `GET /projects` - Lista projetos
+- `GET /projects/{id}` - Visualiza projeto
+- `POST /projects/create` - Cria projeto
+- `PUT /projects/{id}` - Atualiza projeto
+- `DELETE /projects/{id}` - Deleta projeto
+
+**Experiências, Social, Techs e About** seguem o mesmo padrão CRUD.
+
+## 🐳 Docker
+
+### Desenvolvimento
+
+Usa SQLite + Redis, com hot-reload ativado:
+
+```bash
+docker-compose up -d
+```
+
+### Produção
+
+Usa PostgreSQL + Redis, otimizado para performance:
+
+```bash
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+Configure as variáveis de ambiente de produção:
+
+```bash
+DB_DRIVER=pgsql
+DB_HOST=postgres
+DB_DATABASE=portfolio
+DB_USERNAME=portfolio
+DB_PASSWORD=sua-senha-segura
+JWT_SECRET_KEY=sua-chave-jwt-segura
+ADMIN_ID=seu-github-id
+```
+
+## 🧪 Testes
+
+Execute os testes com:
+
+```bash
+make test
+# ou
+docker-compose exec app composer test
+```
+
+## 🔧 Desenvolvimento
+
+### Code Style
+
+```bash
+make cs-fix
+```
+
+### Análise Estática
+
+```bash
+make analyse
+```
+
+### Hot Reload
+
+O ambiente de desenvolvimento já vem com hot-reload configurado via `server:watch`:
+
+```bash
+make watch
+```
+
+## 📦 Database
+
+### Migrations
+
+```bash
+make db-migrate         # Executa migrations
+make db-migrate-fresh   # Dropa tudo e recria
+```
+
+### Seeders
+
+```bash
+make db-seed   # Popula banco com dados de exemplo
+make db-reset  # Fresh + Seed
+```
+
+## 🔐 Autenticação
+
+O sistema usa uma combinação de GitHub OAuth + JWT:
+
+1. **Login via GitHub**: Usuário autentica via OAuth
+2. **Validação de Admin**: Sistema verifica se o GitHub ID corresponde ao `ADMIN_ID`
+3. **Geração de JWT**: Token JWT é gerado e retornado
+4. **Acesso a rotas protegidas**: Token deve ser enviado no header `Authorization: Bearer <token>`
+
+## 🌍 Internacionalização
+
+O projeto suporta múltiplos idiomas para:
+- Posts (tabela `posts_translations`)
+- Projetos (tabela `projects_translations`)
+- Experiências (tabela `experiences_translation`)
+
+## 📝 Licença
+
+[Apache-2.0](LICENSE)
+
+## 🤝 Contribuindo
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests.
+
+## 📞 Suporte
+
+Para questões e suporte, abra uma [issue](../../issues) no repositório.
+
+---
+
+**Desenvolvido com** ❤️ **usando Hyperf Framework**

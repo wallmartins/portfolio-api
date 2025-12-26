@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Swoole\Coroutine;
+use Swoole\Runtime;
+
+require_once __DIR__ . '/../test/bootstrap.php';
+
+// Enable Pest
+$_SERVER['argv'] = array_merge(
+    [$_SERVER['SCRIPT_FILENAME']],
+    array_slice($_SERVER['argv'], 1)
+);
+
+Coroutine\run(function () {
+    require __DIR__ . '/../vendor/pestphp/pest/bin/pest';
+});

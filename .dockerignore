@@ -1,5 +1,55 @@
-**
-!app/
-!bin/
-!config/
-!composer.*
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+docker-compose*.yml
+Dockerfile
+.dockerignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+.DS_Store
+
+# Documentation
+README.md
+CHANGELOG.md
+.editorconfig
+
+# Testing
+tests/
+phpunit.xml
+.phpunit.result.cache
+coverage/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+deploy.test.yml
+
+# Development tools
+.php-cs-fixer.php
+.php-cs-fixer.cache
+phpstan.neon.dist
+
+# Runtime
+runtime/
+storage/logs/*
+!storage/logs/.gitkeep
+
+# Dependencies (will be installed in container)
+vendor/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Temporary files
+*.log
+*.tmp
+.cache/
