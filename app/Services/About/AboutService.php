@@ -14,14 +14,17 @@ namespace App\Services\About;
 
 use App\Model\About\About;
 use App\Repository\About\AboutRepository;
+use App\Services\Image\ImageUploadService;
 use Exception;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Di\Exception\NotFoundException;
+use Hyperf\HttpMessage\Upload\UploadedFile;
 
 class AboutService
 {
     public function __construct(
-        public readonly AboutRepository $aboutRepository
+        public readonly AboutRepository $aboutRepository,
+        protected ImageUploadService $imageUploadService,
     ) {
     }
 
@@ -68,7 +71,25 @@ class AboutService
      */
     public function create(array $data): About
     {
-        return $this->aboutRepository->create($data);
+        $uploadedImageUrl = null;
+
+        try {
+            // Handle image upload if present
+            if (isset($data['image']) && $data['image'] instanceof UploadedFile) {
+                $result = $this->imageUploadService->upload($data['image'], 'about');
+                $uploadedImageUrl = $result->secureUrl;
+                $data['image'] = $uploadedImageUrl;
+            }
+
+            $about = $this->aboutRepository->create($data);
+            return $about;
+        } catch (\Exception $e) {
+            // Rollback: delete uploaded image if about creation failed
+            if ($uploadedImageUrl) {
+                $this->imageUploadService->delete($uploadedImageUrl);
+            }
+            throw $e;
+        }
     }
 
     /**
@@ -78,7 +99,32 @@ class AboutService
     public function update(int $id, array $data): About
     {
         $about = $this->getById($id);
-        return $this->aboutRepository->update($about, $data);
+        $oldImageUrl = $about->image;
+        $uploadedImageUrl = null;
+
+        try {
+            // Handle image upload if present
+            if (isset($data['image']) && $data['image'] instanceof UploadedFile) {
+                $result = $this->imageUploadService->upload($data['image'], 'about');
+                $uploadedImageUrl = $result->secureUrl;
+                $data['image'] = $uploadedImageUrl;
+            }
+
+            $updatedAbout = $this->aboutRepository->update($about, $data);
+
+            // Delete old image if new one was uploaded successfully
+            if ($uploadedImageUrl && $oldImageUrl) {
+                $this->imageUploadService->delete($oldImageUrl);
+            }
+
+            return $updatedAbout;
+        } catch (\Exception $e) {
+            // Rollback: delete uploaded image if update failed
+            if ($uploadedImageUrl) {
+                $this->imageUploadService->delete($uploadedImageUrl);
+            }
+            throw $e;
+        }
     }
 
     /**
@@ -89,6 +135,12 @@ class AboutService
     public function delete(int $id): bool
     {
         $about = $this->getById($id);
+
+        // Delete image from Cloudinary if exists
+        if ($about && $about->image) {
+            $this->imageUploadService->delete($about->image);
+        }
+
         return $this->aboutRepository->delete($about);
     }
 }

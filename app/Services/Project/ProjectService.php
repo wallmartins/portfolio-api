@@ -14,14 +14,18 @@ namespace App\Services\Project;
 
 use App\Model\Project\Project;
 use App\Repository\Project\ProjectRepository;
+use App\Services\Image\ImageUploadService;
 use Exception;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\HttpMessage\Exception\NotFoundHttpException;
+use Hyperf\HttpMessage\Upload\UploadedFile;
 
 class ProjectService
 {
-    public function __construct(protected ProjectRepository $projectRepository)
-    {
+    public function __construct(
+        protected ProjectRepository $projectRepository,
+        protected ImageUploadService $imageUploadService,
+    ) {
     }
 
     public function paginate(array $filters, string $locale, int $perPage = 10): PaginatorInterface
@@ -42,13 +46,56 @@ class ProjectService
 
     public function create(array $data): Project
     {
-        return $this->projectRepository->create($data);
+        $uploadedImageUrl = null;
+
+        try {
+            // Handle image upload if present
+            if (isset($data['image']) && $data['image'] instanceof UploadedFile) {
+                $result = $this->imageUploadService->upload($data['image'], 'projects');
+                $uploadedImageUrl = $result->secureUrl;
+                $data['image'] = $uploadedImageUrl;
+            }
+
+            $project = $this->projectRepository->create($data);
+            return $project;
+        } catch (\Exception $e) {
+            // Rollback: delete uploaded image if project creation failed
+            if ($uploadedImageUrl) {
+                $this->imageUploadService->delete($uploadedImageUrl);
+            }
+            throw $e;
+        }
     }
 
     public function update(int $id, string $locale, array $data): Project
     {
         $project = $this->projectRepository->getById($id, $locale);
-        return $this->projectRepository->update($project, $data);
+        $oldImageUrl = $project->image;
+        $uploadedImageUrl = null;
+
+        try {
+            // Handle image upload if present
+            if (isset($data['image']) && $data['image'] instanceof UploadedFile) {
+                $result = $this->imageUploadService->upload($data['image'], 'projects');
+                $uploadedImageUrl = $result->secureUrl;
+                $data['image'] = $uploadedImageUrl;
+            }
+
+            $updatedProject = $this->projectRepository->update($project, $data);
+
+            // Delete old image if new one was uploaded successfully
+            if ($uploadedImageUrl && $oldImageUrl) {
+                $this->imageUploadService->delete($oldImageUrl);
+            }
+
+            return $updatedProject;
+        } catch (\Exception $e) {
+            // Rollback: delete uploaded image if update failed
+            if ($uploadedImageUrl) {
+                $this->imageUploadService->delete($uploadedImageUrl);
+            }
+            throw $e;
+        }
     }
 
     /**
@@ -57,6 +104,12 @@ class ProjectService
     public function delete(int $id): bool
     {
         $project = Project::find($id);
+
+        // Delete image from Cloudinary if exists
+        if ($project && $project->image) {
+            $this->imageUploadService->delete($project->image);
+        }
+
         return $this->projectRepository->delete($project);
     }
 }

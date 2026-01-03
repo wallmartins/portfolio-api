@@ -20,7 +20,7 @@ class UpdateProjectRequest extends BaseProjectRequest
             'id' => 'bail|required|integer|exists:projects,id',
             'name' => 'bail|sometimes|string',
             'slug' => 'bail|sometimes|string|unique:projects,slug',
-            'image' => 'bail|sometimes|string',
+            'image' => 'bail|sometimes', // Validated in authorize() to accept both file and string
             'translations' => 'bail|sometimes|array|min:1',
             'translations.*.locale' => 'bail|sometimes|string|in:pt-BR,en-US',
             'translations.*.title' => 'bail|sometimes|string',
