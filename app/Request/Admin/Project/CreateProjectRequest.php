@@ -19,7 +19,7 @@ class CreateProjectRequest extends BaseProjectRequest
         return [
             'name' => 'bail|required|string',
             'slug' => 'bail|required|string|unique:projects,slug',
-            'image' => 'sometimes|string',
+            'image' => 'sometimes', // Validated in authorize() to accept both file and string
             'translations' => 'bail|required|array|min:1',
             'translations.locale' => 'bail|required|string|in:pt-BR,en-US',
             'translations.title' => 'bail|required|string',

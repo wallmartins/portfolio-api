@@ -14,14 +14,17 @@ namespace App\Services\Blog;
 
 use App\Model\Blog\Post;
 use App\Repository\Blog\PostRepository;
+use App\Services\Image\ImageUploadService;
 use Exception;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\HttpMessage\Exception\NotFoundHttpException;
+use Hyperf\HttpMessage\Upload\UploadedFile;
 
 class PostService
 {
     public function __construct(
         protected PostRepository $postRepository,
+        protected ImageUploadService $imageUploadService,
     ) {
     }
 
@@ -43,13 +46,56 @@ class PostService
 
     public function create(array $data): Post
     {
-        return $this->postRepository->create($data);
+        $uploadedImageUrl = null;
+
+        try {
+            // Handle image upload if present
+            if (isset($data['image']) && $data['image'] instanceof UploadedFile) {
+                $result = $this->imageUploadService->upload($data['image'], 'posts');
+                $uploadedImageUrl = $result->secureUrl;
+                $data['image'] = $uploadedImageUrl;
+            }
+
+            $post = $this->postRepository->create($data);
+            return $post;
+        } catch (\Exception $e) {
+            // Rollback: delete uploaded image if post creation failed
+            if ($uploadedImageUrl) {
+                $this->imageUploadService->delete($uploadedImageUrl);
+            }
+            throw $e;
+        }
     }
 
     public function update(int $id, string $locale, array $data): Post
     {
         $post = $this->getById($id, $locale);
-        return $this->postRepository->update($post, $data);
+        $oldImageUrl = $post->image;
+        $uploadedImageUrl = null;
+
+        try {
+            // Handle image upload if present
+            if (isset($data['image']) && $data['image'] instanceof UploadedFile) {
+                $result = $this->imageUploadService->upload($data['image'], 'posts');
+                $uploadedImageUrl = $result->secureUrl;
+                $data['image'] = $uploadedImageUrl;
+            }
+
+            $updatedPost = $this->postRepository->update($post, $data);
+
+            // Delete old image if new one was uploaded successfully
+            if ($uploadedImageUrl && $oldImageUrl) {
+                $this->imageUploadService->delete($oldImageUrl);
+            }
+
+            return $updatedPost;
+        } catch (\Exception $e) {
+            // Rollback: delete uploaded image if update failed
+            if ($uploadedImageUrl) {
+                $this->imageUploadService->delete($uploadedImageUrl);
+            }
+            throw $e;
+        }
     }
 
     /**
@@ -58,6 +104,12 @@ class PostService
     public function delete(int $id): bool
     {
         $post = Post::find($id);
+
+        // Delete image from Cloudinary if exists
+        if ($post && $post->image) {
+            $this->imageUploadService->delete($post->image);
+        }
+
         return $this->postRepository->delete($post);
     }
 }

@@ -21,7 +21,7 @@ class UpdatePostRequest extends BasePostRequest
         return [
             'id' => 'bail|required|integer',
             'slug' => "required|string|max:255|unique:posts,{$postSlug}",
-            'image' => 'nullable|string',
+            'image' => 'nullable', // Validated in authorize() to accept both file and string
             'translations' => 'sometimes|required|array|min:1',
             'translations.*.locale' => 'required|string|in:pt-BR,en-US',
             'translations.*.title' => 'sometimes|required|string|max:255',

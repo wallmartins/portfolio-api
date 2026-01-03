@@ -12,12 +12,60 @@ declare(strict_types=1);
 
 namespace App\Request\Admin\Project;
 
+use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Validation\Request\FormRequest;
+use function Hyperf\Config\config;
 
 class BaseProjectRequest extends FormRequest
 {
     public function authorize(): bool
     {
+        return $this->validateImageField();
+    }
+
+    /**
+     * Validate image field - accepts both UploadedFile and string URL.
+     */
+    protected function validateImageField(): bool
+    {
+        $image = $this->input('image');
+
+        if ($image === null) {
+            return true;
+        }
+
+        // If string URL, validate URL format
+        if (is_string($image)) {
+            return filter_var($image, FILTER_VALIDATE_URL) !== false;
+        }
+
+        // If uploaded file, validate file
+        if ($image instanceof UploadedFile) {
+            return $this->validateUploadedImage($image);
+        }
+
+        // Invalid type
+        return false;
+    }
+
+    /**
+     * Validate uploaded image file.
+     */
+    protected function validateUploadedImage(UploadedFile $file): bool
+    {
+        $config = config('cloudinary');
+
+        // Validate size
+        if ($file->getSize() > $config['max_file_size']) {
+            return false;
+        }
+
+        // Validate extension
+        $extension = strtolower($file->getExtension());
+        if (! in_array($extension, $config['allowed_formats'], true)) {
+            return false;
+        }
+
         return true;
     }
 
@@ -34,7 +82,7 @@ class BaseProjectRequest extends FormRequest
             'slug.required' => 'The slug field is required.',
             'slug.string' => 'The slug must be a string.',
 
-            'image.string' => 'The image must be a string.',
+            'image.string' => 'The image must be a valid URL or file upload.',
 
             'translations.required' => 'The translation field is required.',
             'translations.array' => 'The translation field must be an array.',
