@@ -14,7 +14,9 @@ namespace App\Controller\Portfolio;
 
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
+use Hyperf\Swagger\Annotation\HyperfServer;
 
+#[HyperfServer('http')]
 class ChatController
 {
     public function index(RequestInterface $request, ResponseInterface $response)

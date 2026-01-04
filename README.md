@@ -18,6 +18,9 @@ Esta é uma API completa para gerenciar um portfólio pessoal, incluindo projeto
 - ✅ **Suporte a Traduções** - Conteúdo multilíngue (i18n)
 - ✅ **Cache Redis** - Performance otimizada
 - ✅ **API REST** - Endpoints bem estruturados e documentados
+- ✅ **Documentação Swagger** - Interface interativa para testar endpoints
+- ✅ **Upload de Imagens** - Integração com Cloudinary
+- ✅ **CORS Configurado** - Suporte para requisições cross-origin
 
 ## 🏗️ Arquitetura e Tecnologias
 
@@ -110,7 +113,9 @@ docker-compose exec app sh /opt/www/docker/scripts/init-dev.sh
 
 4. **Acesse a aplicação**
 
-A API estará disponível em: http://localhost:9501
+- **API**: http://localhost:9501
+- **Swagger UI**: http://localhost:9500/swagger
+- **Swagger JSON**: http://localhost:9500/http.json
 
 ## 📚 Comandos Disponíveis
 
@@ -179,34 +184,143 @@ Todas as rotas abaixo requerem header: `Authorization: Bearer <token>`
 
 **Experiências, Social, Techs e About** seguem o mesmo padrão CRUD.
 
+## 📖 Documentação Swagger
+
+A API possui documentação interativa via Swagger UI:
+
+- **Swagger UI**: http://localhost:9500/swagger
+- **Swagger JSON**: http://localhost:9500/http.json
+
+### Características
+
+- 📝 Documentação completa de todos os endpoints
+- 🧪 Teste endpoints diretamente pela interface
+- 🔐 Suporte para autenticação Bearer (JWT)
+- 🌍 Especificação OpenAPI 3.0
+
+### Autenticação no Swagger
+
+Para testar endpoints protegidos:
+1. Faça login via `/auth/github/callback` para obter o token JWT
+2. Clique no botão "Authorize" no Swagger UI
+3. Cole o token no campo de autenticação (Bearer token)
+4. Agora você pode testar endpoints administrativos
+
 ## 🐳 Docker
 
-### Desenvolvimento
+O projeto utiliza Docker multi-stage com suporte para desenvolvimento e produção.
 
-Usa SQLite + Redis, com hot-reload ativado:
+### Desenvolvimento (SQLite)
+
+Ideal para desenvolvimento local com hot-reload:
 
 ```bash
+# Iniciar
 docker-compose up -d
+
+# Ver logs
+docker-compose logs -f app
+
+# Acessar shell
+docker-compose exec app sh
 ```
 
-### Produção
+**Características**:
+- ✅ Database: SQLite (arquivo local)
+- ✅ Hot-reload ativado (`server:watch`)
+- ✅ Code mounted como volume (mudanças refletem instantaneamente)
+- ✅ Redis para cache
+- ✅ Porta API: 9501
+- ✅ Porta Swagger: 9500
 
-Usa PostgreSQL + Redis, otimizado para performance:
+### Produção (PostgreSQL)
+
+Otimizado para ambiente de produção:
 
 ```bash
+# Copiar arquivo de configuração
+cp .env.prod.example .env
+
+# Configurar variáveis de produção (obrigatório!)
+# - JWT_SECRET_KEY: gere com `php -r "echo base64_encode(random_bytes(32));"`
+# - DB_PASSWORD: senha forte para PostgreSQL
+# - ADMIN_ID: seu GitHub ID
+# - CLOUDINARY_*: credenciais do Cloudinary
+
+# Iniciar
 docker-compose -f docker-compose.prod.yml up -d
+
+# Ver status
+docker-compose -f docker-compose.prod.yml ps
+
+# Ver logs
+docker-compose -f docker-compose.prod.yml logs -f app
 ```
 
-Configure as variáveis de ambiente de produção:
+**Características**:
+- ✅ Database: PostgreSQL 16
+- ✅ Build otimizado (classmap authoritative)
+- ✅ Sem dependências de desenvolvimento
+- ✅ Redis com persistência
+- ✅ Health checks configurados
+- ✅ Auto-restart em caso de falha
 
+### Migração de Ambientes
+
+A aplicação suporta tanto SQLite quanto PostgreSQL sem mudanças no código!
+
+**SQLite → PostgreSQL:**
 ```bash
+# 1. Altere no .env
 DB_DRIVER=pgsql
 DB_HOST=postgres
+DB_PORT=5432
 DB_DATABASE=portfolio
 DB_USERNAME=portfolio
-DB_PASSWORD=sua-senha-segura
-JWT_SECRET_KEY=sua-chave-jwt-segura
-ADMIN_ID=seu-github-id
+DB_PASSWORD=sua-senha
+
+# 2. Reinicie o container
+docker-compose restart app
+
+# 3. As migrations rodarão automaticamente
+```
+
+**PostgreSQL → SQLite:**
+```bash
+# 1. Altere no .env
+DB_DRIVER=sqlite
+DB_DATABASE=/opt/www/runtime/database.sqlite
+
+# 2. Reinicie o container
+docker-compose restart app
+```
+
+### Comandos Docker Úteis
+
+```bash
+# Parar todos os serviços
+docker-compose down
+
+# Parar e remover volumes (limpa dados)
+docker-compose down -v
+
+# Rebuild completo
+docker-compose build --no-cache
+docker-compose up -d
+
+# Executar migrations manualmente
+docker-compose exec app php bin/hyperf.php migrate
+
+# Gerar documentação Swagger
+docker-compose exec app php bin/hyperf.php gen:swagger
+
+# Backup PostgreSQL (produção)
+docker-compose -f docker-compose.prod.yml exec postgres \
+  pg_dump -U portfolio portfolio > backup.sql
+
+# Restaurar backup
+docker-compose -f docker-compose.prod.yml exec -T postgres \
+  psql -U portfolio portfolio < backup.sql
 ```
 
 ## 🧪 Testes
@@ -273,6 +387,158 @@ O projeto suporta múltiplos idiomas para:
 - Projetos (tabela `projects_translations`)
 - Experiências (tabela `experiences_translation`)
 
+## ⚙️ Configurações Importantes
+
+### Variáveis de Ambiente Obrigatórias
+
+```env
+# Segurança (CRÍTICO!)
+JWT_SECRET_KEY=gere-uma-chave-segura-aqui
+ADMIN_ID=seu-github-user-id
+
+# Database (muda por ambiente)
+DB_DRIVER=sqlite|pgsql
+
+# Cloudinary (para upload de imagens)
+CLOUDINARY_CLOUD_NAME=seu-cloud-name
+CLOUDINARY_API_KEY=sua-api-key
+CLOUDINARY_API_SECRET=seu-api-secret
+```
+
+### Portas Utilizadas
+
+- `9501` - API Principal (HTTP Server)
+- `9500` - Swagger UI
+- `6379` - Redis
+- `5432` - PostgreSQL (somente produção)
+
+### Requisitos de Sistema
+
+**Desenvolvimento:**
+- Docker 20.10+
+- Docker Compose 2.0+
+- 2GB RAM mínimo
+
+**Produção:**
+- Docker 20.10+
+- Docker Compose 2.0+
+- 4GB RAM recomendado
+- PostgreSQL 16+
+- Redis 7+
+
+## 🔧 Troubleshooting
+
+### Porta já em uso
+
+```bash
+# Encontrar processo usando a porta
+lsof -i :9501
+
+# Matar processo (se necessário)
+kill -9 <PID>
+
+# Ou alterar porta no docker-compose.yml
+ports:
+  - "9502:9501"  # Nova porta externa
+```
+
+### Erro ao conectar com banco de dados
+
+**SQLite:**
+```bash
+# Verificar permissões
+docker-compose exec app ls -la /opt/www/runtime/
+
+# Recriar database
+docker-compose exec app rm /opt/www/runtime/database.sqlite
+docker-compose restart app
+```
+
+**PostgreSQL:**
+```bash
+# Verificar se PostgreSQL está rodando
+docker-compose -f docker-compose.prod.yml ps postgres
+
+# Ver logs do PostgreSQL
+docker-compose -f docker-compose.prod.yml logs postgres
+
+# Testar conexão
+docker-compose -f docker-compose.prod.yml exec app \
+  pg_isready -h postgres -p 5432 -U portfolio
+```
+
+### Migrations falhando
+
+```bash
+# Rodar migrations manualmente
+docker-compose exec app php bin/hyperf.php migrate --force
+
+# Ver status das migrations
+docker-compose exec app php bin/hyperf.php migrate:status
+
+# Rollback última migration
+docker-compose exec app php bin/hyperf.php migrate:rollback
+
+# Reset completo (cuidado!)
+docker-compose exec app php bin/hyperf.php migrate:fresh
+```
+
+### Problemas com Redis
+
+```bash
+# Verificar se Redis está respondendo
+docker-compose exec redis redis-cli ping
+# Deve retornar: PONG
+
+# Limpar cache do Redis
+docker-compose exec redis redis-cli FLUSHALL
+
+# Reiniciar Redis
+docker-compose restart redis
+```
+
+### Swagger não carrega
+
+```bash
+# Regerar documentação Swagger
+docker-compose exec app php bin/hyperf.php gen:swagger
+
+# Verificar se arquivo foi gerado
+docker-compose exec app ls -la /opt/www/storage/swagger/
+
+# Reiniciar aplicação
+docker-compose restart app
+```
+
+### Container não inicia
+
+```bash
+# Ver logs completos
+docker-compose logs app
+
+# Rebuild sem cache
+docker-compose down
+docker-compose build --no-cache
+docker-compose up -d
+
+# Verificar variáveis de ambiente
+docker-compose exec app printenv | grep DB_
+```
+
+### Limpeza Completa
+
+```bash
+# Parar tudo e remover volumes
+docker-compose down -v
+
+# Remover imagens antigas
+docker system prune -a -f
+
+# Reconstruir do zero
+docker-compose build --no-cache
+docker-compose up -d
+```
+
 ## 📝 Licença
 
 [Apache-2.0](LICENSE)
@@ -281,9 +547,20 @@ O projeto suporta múltiplos idiomas para:
 
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests.
 
+### Como Contribuir
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/MinhaFeature`)
+3. Commit suas mudanças (`git commit -m 'Adiciona MinhaFeature'`)
+4. Push para a branch (`git push origin feature/MinhaFeature`)
+5. Abra um Pull Request
+
 ## 📞 Suporte
 
-Para questões e suporte, abra uma [issue](../../issues) no repositório.
+Para questões e suporte:
+- 🐛 Bugs e Issues: [GitHub Issues](../../issues)
+- 📖 Documentação: [Hyperf Documentation](https://hyperf.wiki)
+- 💬 Discussões: [GitHub Discussions](../../discussions)
 
 ---
 
