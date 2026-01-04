@@ -19,8 +19,7 @@ RUN set -ex \
         bash \
         git \
         curl \
-    # Install PDO PostgreSQL extension
-    && docker-php-ext-install pdo_pgsql \
+        php83-pdo_pgsql \
     && php -v \
     && php -m \
     && php --ri swoole \
