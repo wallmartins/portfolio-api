@@ -54,6 +54,9 @@ RUN composer install --no-scripts --no-autoloader
 # Copy application code
 COPY . .
 
+# Create .env from example for build process
+RUN cp .env.example .env
+
 # Generate autoload and optimize
 RUN composer dump-autoload --optimize \
     && mkdir -p runtime/container storage swagger \
@@ -81,6 +84,9 @@ RUN composer install --no-dev --no-scripts --no-autoloader -o
 
 # Copy application code
 COPY . .
+
+# Create .env from production example for build process
+RUN cp .env.prod.example .env
 
 # Generate optimized autoload
 RUN composer dump-autoload --optimize --classmap-authoritative \
