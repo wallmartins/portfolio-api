@@ -9,6 +9,7 @@ services:
       target: production
     ports:
       - "9501:9501"
+      - "9500:9500"
     environment:
       - APP_ENV=prod
       - SCAN_CACHEABLE=true
@@ -22,6 +23,11 @@ services:
       - REDIS_PORT=6379
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - ADMIN_ID=${ADMIN_ID}
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID:-}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET:-}
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
     depends_on:
       postgres:
         condition: service_healthy
@@ -31,10 +37,11 @@ services:
       - portfolio-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "php", "-v"]
+      test: ["CMD", "curl", "-f", "http://localhost:9501/", "||", "exit", "1"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 40s
 
   postgres:
     container_name: portfolio-postgres

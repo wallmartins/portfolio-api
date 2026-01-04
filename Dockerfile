@@ -14,9 +14,12 @@ ENV TIMEZONE=${timezone:-"America/Sao_Paulo"}
 RUN set -ex \
     && apk add --no-cache \
         postgresql-dev \
+        postgresql-client \
         sqlite-dev \
         bash \
         git \
+        curl \
+        php83-pdo_pgsql \
     && php -v \
     && php -m \
     && php --ri swoole \
@@ -50,13 +53,18 @@ RUN composer install --no-scripts --no-autoloader
 # Copy application code
 COPY . .
 
+# Create .env from example for build process
+RUN cp .env.example .env
+
 # Generate autoload and optimize
 RUN composer dump-autoload --optimize \
-    && mkdir -p runtime/container storage \
-    && chmod -R 777 runtime storage
+    && mkdir -p runtime/container storage swagger \
+    && chmod -R 777 runtime storage \
+    && chmod +x docker/scripts/entrypoint.sh
 
-EXPOSE 9501
+EXPOSE 9501 9500
 
+ENTRYPOINT ["docker/scripts/entrypoint.sh"]
 CMD ["php", "bin/hyperf.php", "server:watch"]
 
 ##
@@ -76,13 +84,18 @@ RUN composer install --no-dev --no-scripts --no-autoloader -o
 # Copy application code
 COPY . .
 
+# Create .env from production example for build process
+RUN cp .env.prod.example .env
+
 # Generate optimized autoload
 RUN composer dump-autoload --optimize --classmap-authoritative \
     && php bin/hyperf.php \
-    && mkdir -p runtime/container storage \
+    && mkdir -p runtime/container storage swagger \
     && chmod -R 777 runtime storage \
+    && chmod +x docker/scripts/entrypoint.sh \
     && rm -rf /var/cache/apk/* /tmp/*
 
-EXPOSE 9501
+EXPOSE 9501 9500
 
-ENTRYPOINT ["php", "/opt/www/bin/hyperf.php", "start"]
+ENTRYPOINT ["docker/scripts/entrypoint.sh"]
+CMD ["php", "/opt/www/bin/hyperf.php", "start"]
