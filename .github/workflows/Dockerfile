@@ -18,8 +18,16 @@ ENV TIMEZONE=${timezone:-"Asia/Shanghai"} \
     APP_ENV=prod \
     SCAN_CACHEABLE=(true)
 
-# update
+# Install necessary extensions and tools
 RUN set -ex \
+    && apk add --no-cache \
+        postgresql-dev \
+        postgresql-client \
+        sqlite-dev \
+        bash \
+        git \
+        curl \
+        php83-pdo_pgsql \
     # show php version and extensions
     && php -v \
     && php -m \
@@ -47,7 +55,15 @@ WORKDIR /opt/www
 # RUN composer install --no-dev --no-scripts
 
 COPY . /opt/www
-RUN print "\n" | composer install -o && php bin/hyperf.php
+
+# Create .env from production example for build process
+RUN cp .env.prod.example .env
+
+# Install dependencies and run hyperf bootstrap
+RUN print "\n" | composer install -o \
+    && php bin/hyperf.php \
+    && mkdir -p runtime/container storage swagger \
+    && chmod -R 777 runtime storage
 
 EXPOSE 9501
 
