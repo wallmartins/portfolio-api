@@ -59,11 +59,16 @@ COPY . /opt/www
 # Create .env from production example for build process
 RUN cp .env.prod.example .env
 
-# Install dependencies and run hyperf bootstrap
-RUN print "\n" | composer install -o \
-    && php bin/hyperf.php \
-    && mkdir -p runtime/container storage swagger \
+# Install dependencies
+RUN composer install --no-dev --no-scripts --no-autoloader -o
+
+# Create required directories first
+RUN mkdir -p runtime/container storage swagger \
     && chmod -R 777 runtime storage
+
+# Generate optimized autoload and bootstrap Hyperf
+RUN composer dump-autoload --optimize --classmap-authoritative \
+    && php bin/hyperf.php
 
 EXPOSE 9501
 

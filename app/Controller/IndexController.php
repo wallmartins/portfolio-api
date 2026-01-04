@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Hyperf\Swagger\Annotation\HyperfServer;
+
 #[HyperfServer('http')]
 class IndexController extends AbstractController
 {
