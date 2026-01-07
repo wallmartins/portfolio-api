@@ -21,6 +21,7 @@ use Hyperf\Swagger\Annotation\HyperfServer;
 use OnixSystemsPHP\HyperfSocialite\Contracts\Factory as SocialiteFactory;
 use OpenApi\Attributes as OA;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+use function Hyperf\Support\env;
 
 #[HyperfServer('http')]
 class AuthController
@@ -74,15 +75,7 @@ class AuthController
         responses: [
             new OA\Response(
                 response: 200,
-                description: 'User authenticated successfully',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'name', type: 'string', example: 'John Doe'),
-                        new OA\Property(property: 'email', type: 'string', format: 'email', example: 'john@example.com'),
-                        new OA\Property(property: 'accessToken', type: 'string', example: 'eyJ0eXAiOiJKV1QiLCJhbGc...'),
-                        new OA\Property(property: 'avatar', type: 'string', format: 'uri', example: 'https://avatars.githubusercontent.com/u/123456'),
-                    ]
-                )
+                description: 'Returns HTML page that sends auth data to opener window via postMessage'
             ),
             new OA\Response(response: 401, description: 'Authentication failed'),
         ]
@@ -100,13 +93,76 @@ class AuthController
 
         $authData = $this->authService->findOrCreateUser($userData);
 
-        return $this->jsonResource(
-            AuthResource::make(
-                name: $authData['user']->name,
-                email: $authData['user']->email,
-                accessToken: $authData['accessToken'],
-                avatar: $githubUser->getAvatar()
-            )
-        );
+        $authResponse = [
+            'token' => $authData['accessToken'],
+            'name' => $authData['user']->name,
+            'email' => $authData['user']->email,
+            'avatar' => $githubUser->getAvatar(),
+        ];
+
+        $frontendUrl = env('FRONTEND_URL', 'http://localhost:3000');
+        $authDataJson = json_encode($authResponse);
+
+        $html = <<<HTML
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Authentication Successful</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: #f5f5f5;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .success {
+            color: #22c55e;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        h1 { margin: 0 0 0.5rem 0; }
+        p { color: #666; margin: 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success">✓</div>
+        <h1>Authentication Successful</h1>
+        <p>You can close this window now.</p>
+    </div>
+    <script>
+        const authData = {$authDataJson};
+
+        // Send auth data to the opener window
+        if (window.opener) {
+            window.opener.postMessage({
+                type: 'AUTH_SUCCESS',
+                data: authData
+            }, '{$frontendUrl}');
+
+            // Auto-close after sending
+            setTimeout(() => {
+                window.close();
+            }, 1000);
+        } else {
+            console.error('No opener window found');
+        }
+    </script>
+</body>
+</html>
+HTML;
+
+        return $this->response->html($html);
     }
+
 }
